@@ -1,7 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export default function AdminReviews() {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams ? (searchParams.get('search') || '') : '';
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('pending');
@@ -74,6 +77,12 @@ export default function AdminReviews() {
     }
   }
 
+  const filteredItems = items.filter(review => 
+    review.customerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    review.text?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    review.role?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
@@ -98,11 +107,13 @@ export default function AdminReviews() {
 
       {loading ? (
         <div className="text-center py-8">Loading reviews...</div>
-      ) : items.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">No {statusFilter} reviews found.</div>
+      ) : filteredItems.length === 0 ? (
+        <div className="text-center py-8 text-gray-500">
+          {items.length === 0 ? `No ${statusFilter} reviews found.` : 'No matching reviews found.'}
+        </div>
       ) : (
         <div className="space-y-4">
-          {items.map(review => (
+          {filteredItems.map(review => (
             <div key={review._id} className="admin-glass p-6 flex flex-col md:flex-row justify-between gap-4">
               <div className="space-y-2 flex-1">
                 <div className="flex items-center gap-3">

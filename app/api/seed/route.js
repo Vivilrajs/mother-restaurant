@@ -81,6 +81,18 @@ const galleryImages = [
   { url:IMG.chef,    alt:'Chef Fatima', category:'ambiance' },
 ];
 
+const contactMessages = [
+  { name: 'John Doe', email: 'john@example.com', phone: '+971 50 123 4567', subject: 'Catering Query', message: 'Hello, I would like to inquire about your catering services for a corporate dinner of 50 people next month. Please send us your menu packages. Thank you!' },
+  { name: 'Amna Al-Mansoori', email: 'amna@mansoori.ae', phone: '', subject: 'Feedback on Dinner', message: 'We had an amazing dinner tonight at your Jumeirah branch! The Wagyu beef tenderloin was absolute perfection. Thank you Chef Fatima!' }
+];
+
+const awards = [
+  { icon: 'fa-star', title: 'UAE Excellence', text: 'Best Family Restaurant 2024', image: '' },
+  { icon: 'fa-trophy', title: 'Dubai Food Festival', text: 'Outstanding Chef 2023', image: '' },
+  { icon: 'fa-medal', title: "Gulf's 50 Best", text: 'Ranked #8 in 2024', image: '' },
+  { icon: 'fa-certificate', title: 'HACCP Certified', text: 'Food Safety Excellence', image: '' },
+];
+
 export async function GET() {
   try {
     const db = await getDb();
@@ -104,6 +116,12 @@ export async function GET() {
 
     await db.collection('gallery').deleteMany({});
     await db.collection('gallery').insertMany(addTs(galleryImages));
+
+    await db.collection('contact_messages').deleteMany({});
+    await db.collection('contact_messages').insertMany(addTs(contactMessages));
+
+    await db.collection('awards').deleteMany({});
+    await db.collection('awards').insertMany(addTs(awards));
 
     await db.collection('settings').updateOne(
       { _id: 'global' },

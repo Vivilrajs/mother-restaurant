@@ -1,8 +1,11 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import useCategories from '@/components/admin/useCategories';
+import { useSearchParams } from 'next/navigation';
 
 export default function AdminGallery() {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams ? (searchParams.get('search') || '') : '';
   const [items, setItems] = useState([]);
   const { categories: categoryDocs, names: categories, addCategory: addCategoryApi, removeCategory: removeCategoryApi } = useCategories('gallery');
   const [activeCategory, setActiveCategory] = useState('All');
@@ -84,7 +87,8 @@ export default function AdminGallery() {
     }
   }
 
-  const filtered = activeCategory === 'All' ? items : items.filter(i => i.category === activeCategory);
+  const filtered = (activeCategory === 'All' ? items : items.filter(i => i.category === activeCategory))
+    .filter(i => i.alt?.toLowerCase().includes(searchQuery.toLowerCase()) || i.category?.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <div className="space-y-6">
@@ -112,7 +116,9 @@ export default function AdminGallery() {
       {loading ? (
         <div className="text-center py-8">Loading gallery items...</div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">No images found. Add images to populate.</div>
+        <div className="text-center py-8 text-gray-500">
+          {items.length === 0 ? 'No images found. Add images to populate.' : 'No matching images found.'}
+        </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {filtered.map((img, index) => (

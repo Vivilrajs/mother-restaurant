@@ -1,7 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export default function AdminBranches() {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams ? (searchParams.get('search') || '') : '';
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -83,6 +86,13 @@ export default function AdminBranches() {
     }
   }
 
+  const filteredItems = items.filter(branch => 
+    branch.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    branch.location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    branch.phone?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    branch.email?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -94,11 +104,13 @@ export default function AdminBranches() {
 
       {loading ? (
         <div className="text-center py-8">Loading branches...</div>
-      ) : items.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">No branches found. Add branches to populate.</div>
+      ) : filteredItems.length === 0 ? (
+        <div className="text-center py-8 text-gray-500">
+          {items.length === 0 ? 'No branches found. Add branches to populate.' : 'No matching branches found.'}
+        </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
-          {items.map(branch => (
+          {filteredItems.map(branch => (
             <div key={branch._id} className="admin-glass p-6 flex flex-col justify-between space-y-4">
               <div>
                 <div className="flex justify-between items-start gap-4">

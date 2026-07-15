@@ -1,7 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export default function AdminFaqs() {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams ? (searchParams.get('search') || '') : '';
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
@@ -60,6 +63,11 @@ export default function AdminFaqs() {
     }
   }
 
+  const filteredItems = items.filter(item => 
+    item.question?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.answer?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -71,11 +79,13 @@ export default function AdminFaqs() {
 
       {loading ? (
         <div className="text-center py-8">Loading FAQs...</div>
-      ) : items.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">No FAQs found. Add one to populate the public FAQs page.</div>
+      ) : filteredItems.length === 0 ? (
+        <div className="text-center py-8 text-gray-500">
+          {items.length === 0 ? 'No FAQs found. Add one to populate the public FAQs page.' : 'No matching FAQs found.'}
+        </div>
       ) : (
         <div className="space-y-3">
-          {items.map(item => (
+          {filteredItems.map(item => (
             <div key={item._id} className="admin-glass p-5 flex justify-between items-start gap-4">
               <div className="flex-1">
                 <h3 className="font-semibold text-[#2d2422] mb-1">{item.question}</h3>

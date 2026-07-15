@@ -2,10 +2,14 @@
 import { useState, useEffect } from 'react';
 import ImageUploader from '@/components/admin/ImageUploader';
 import useCategories from '@/components/admin/useCategories';
+import { useSearchParams } from 'next/navigation';
 
 export default function AdminBlog() {
+  const searchParams = useSearchParams();
+  const querySearch = searchParams ? (searchParams.get('search') || '') : '';
   const [items, setItems] = useState([]);
   const { categories: categoryDocs, names: categories, addCategory: addCategoryApi, removeCategory: removeCategoryApi } = useCategories('blog');
+  const [search, setSearch] = useState(querySearch);
   const [loading, setLoading] = useState(true);
 
   // Edit/Add modal state
@@ -33,8 +37,19 @@ export default function AdminBlog() {
   }
 
   useEffect(() => {
+    setSearch(querySearch);
+  }, [querySearch]);
+
+  useEffect(() => {
     loadItems();
   }, []);
+
+  const filteredItems = items.filter(post => 
+    post.title?.toLowerCase().includes(search.toLowerCase()) ||
+    post.content?.toLowerCase().includes(search.toLowerCase()) ||
+    post.category?.toLowerCase().includes(search.toLowerCase()) ||
+    post.author?.toLowerCase().includes(search.toLowerCase())
+  );
 
   function openAddModal() {
     setEditItem(null);
@@ -102,7 +117,13 @@ export default function AdminBlog() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <input type="text" placeholder="Search posts..." className="form-input w-full sm:w-64 bg-white" />
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search posts..."
+          className="form-input w-full sm:w-64 bg-white"
+        />
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <button onClick={() => setCategoryModal(true)} className="px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 w-full sm:w-auto justify-center border border-brand-600 text-brand-600 hover:bg-brand-50 transition bg-white">
             <i className="fas fa-tags"></i> Categories
@@ -129,9 +150,9 @@ export default function AdminBlog() {
             <tbody>
               {loading ? (
                 <tr><td colSpan="6" className="text-center py-8">Loading posts...</td></tr>
-              ) : items.length === 0 ? (
-                <tr><td colSpan="6" className="text-center py-8 text-gray-500">No blog posts found.</td></tr>
-              ) : items.map(post => (
+              ) : filteredItems.length === 0 ? (
+                <tr><td colSpan="6" className="text-center py-8 text-gray-500">{items.length === 0 ? 'No blog posts found.' : 'No matching blog posts found.'}</td></tr>
+              ) : filteredItems.map(post => (
                 <tr key={post._id}>
                   <td>
                     <div className="flex items-center gap-3">

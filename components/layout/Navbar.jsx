@@ -15,7 +15,12 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [dark, setDark] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [expanded, setExpanded] = useState({});
   const pathname = usePathname();
+
+  const toggleSection = (label) => {
+    setExpanded(prev => ({ ...prev, [label]: !prev[label] }));
+  };
 
   useEffect(() => {
     const saved = localStorage.getItem('theme');
@@ -53,7 +58,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav id="navbar" className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 dark:bg-[#1a1412]/95 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
+      <nav id="navbar" className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'scrolled bg-white/95 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <Link href="/"><Logo /></Link>
@@ -79,9 +84,6 @@ export default function Navbar() {
               <button onClick={toggleTheme} className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-brand-600/30 flex items-center justify-center hover:bg-brand-600/10 transition bg-white/90 dark:bg-[#1a1412]/90 backdrop-blur shadow-sm" aria-label="Toggle theme">
                 <i className={`fas ${dark ? 'fa-moon text-brand-400' : 'fa-sun text-brand-600'} text-xs sm:text-sm`}></i>
               </button>
-              <Link href="/admin" className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-brand-600/30 flex items-center justify-center hover:bg-brand-600/10 transition bg-white/90 dark:bg-[#1a1412]/90 backdrop-blur shadow-sm" aria-label="Admin Panel" title="Admin Panel">
-                <i className="fas fa-cog text-brand-600 dark:text-brand-400 text-xs sm:text-sm"></i>
-              </Link>
               <Link href="/reservation" className="btn-premium px-6 py-2.5 rounded-full text-sm font-semibold hidden md:inline-flex items-center gap-2">
                 <i className="fas fa-calendar-alt"></i> Reserve
               </Link>
@@ -104,10 +106,41 @@ export default function Navbar() {
             </div>
             <button onClick={() => setMobileOpen(false)} className="w-10 h-10 flex items-center justify-center text-white"><i className="fas fa-times text-2xl"></i></button>
           </div>
-          <div className="flex flex-col gap-6">
-            {[{href:'/',l:'Home'},{href:'/about',l:'About'},{href:'/story',l:'Our Story'},{href:'/menu',l:'Menu'},{href:'/chef',l:'Chef'},{href:'/gallery',l:'Gallery'},{href:'/blog',l:'Blog'},{href:'/testimonials',l:'Reviews'},{href:'/private-dining',l:'Private Dining'},{href:'/faqs',l:'FAQs'},{href:'/contact',l:'Contact'},{href:'/admin',l:'Admin Panel'}].map(({href,l}) => (
-              <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="text-2xl font-serif hover:text-brand-400 transition text-white">{l}</Link>
-            ))}
+          <div className="flex flex-col gap-4 overflow-y-auto max-h-[70vh] pr-2">
+            {navLinks.map((link) =>
+              link.children ? (
+                <div key={link.label} className="flex flex-col">
+                  <button
+                    onClick={() => toggleSection(link.label)}
+                    className="text-2xl font-serif hover:text-brand-400 transition text-white text-left flex justify-between items-center w-full py-1 cursor-pointer"
+                  >
+                    <span>{link.label}</span>
+                    <i className={`fas fa-chevron-${expanded[link.label] ? 'up' : 'down'} text-lg transition-transform`}></i>
+                  </button>
+                  <div className={`pl-4 flex flex-col gap-2 overflow-hidden transition-all duration-300 ${expanded[link.label] ? 'max-h-56 mt-2 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    {link.children.map(c => (
+                      <Link
+                        key={c.href}
+                        href={c.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="text-lg font-sans hover:text-brand-400 transition text-gray-300 py-1"
+                      >
+                        {c.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="text-2xl font-serif hover:text-brand-400 transition text-white py-1"
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
             <Link href="/reservation" onClick={() => setMobileOpen(false)} className="btn-premium px-6 py-3 rounded-full text-center font-semibold mt-4">Reserve a Table</Link>
           </div>
         </div>

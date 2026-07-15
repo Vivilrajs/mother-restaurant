@@ -195,3 +195,88 @@ footer.site-footer { background-color:#2d2422; color:#f9f3e8; transition:backgro
 
 /* ── Toast ───────────────────────────────────────── */
 #toast { background:#b8756a; color:white; }
+
+/* ── Logo Transitions ────────────────────────────── */
+.logo-the,
+.logo-restaurant {
+  transition: color 0.3s ease !important;
+}
+
+/* ── Navbar Scrolled State ── */
+#navbar.scrolled {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+#navbar.scrolled .logo-the,
+#navbar.scrolled .logo-restaurant,
+.dark #navbar.scrolled .logo-the,
+.dark #navbar.scrolled .logo-restaurant {
+  color: #2d2422 !important;
+}
+
+#navbar.scrolled .nav-link,
+#navbar.scrolled .text-body,
+#navbar.scrolled .text-heading,
+.dark #navbar.scrolled .nav-link,
+.dark #navbar.scrolled .text-body,
+.dark #navbar.scrolled .text-heading {
+  color: #2d2422 !important;
+}
+
+#navbar.scrolled .nav-link:hover,
+#navbar.scrolled .nav-link.active,
+.dark #navbar.scrolled .nav-link:hover,
+.dark #navbar.scrolled .nav-link.active {
+  color: #b8756a !important;
+}
+
+#navbar.scrolled .mega-menu,
+.dark #navbar.scrolled .mega-menu {
+  background-color: #ffffff !important;
+  border-color: rgba(184, 117, 106, 0.2) !important;
+}
+
+#navbar.scrolled .mega-menu a,
+.dark #navbar.scrolled .mega-menu a {
+  color: #2d2422 !important;
+}
+
+#navbar.scrolled .mega-menu a:hover,
+.dark #navbar.scrolled .mega-menu a:hover {
+  background-color: rgba(184, 117, 106, 0.05) !important;
+  color: #b8756a !important;
+}
+
+#navbar.scrolled button:not(.btn-premium),
+#navbar.scrolled a.rounded-full:not(.btn-premium),
+.dark #navbar.scrolled button:not(.btn-premium),
+.dark #navbar.scrolled a.rounded-full:not(.btn-premium) {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(184, 117, 106, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+#navbar.scrolled button:not(.btn-premium):hover,
+#navbar.scrolled a.rounded-full:not(.btn-premium):hover,
+.dark #navbar.scrolled button:not(.btn-premium):hover,
+.dark #navbar.scrolled a.rounded-full:not(.btn-premium):hover {
+  background-color: rgba(184, 117, 106, 0.1) !important;
+}
+
+#navbar.scrolled .fa-moon,
+#navbar.scrolled .fa-sun,
+#navbar.scrolled .fa-cog,
+.dark #navbar.scrolled .fa-moon,
+.dark #navbar.scrolled .fa-sun,
+.dark #navbar.scrolled .fa-cog {
+  color: #b8756a !important;
+  transition: color 0.3s ease !important;
+}
+
+#navbar.scrolled .fa-bars,
+.dark #navbar.scrolled .fa-bars {
+  color: #2d2422 !important;
+  transition: color 0.3s ease !important;
+}
+
+

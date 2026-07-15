@@ -2,11 +2,14 @@
 import { useState, useEffect } from 'react';
 import ImageUploader from '@/components/admin/ImageUploader';
 import useCategories from '@/components/admin/useCategories';
+import { useSearchParams } from 'next/navigation';
 
 export default function AdminMenu() {
+  const searchParams = useSearchParams();
+  const querySearch = searchParams ? (searchParams.get('search') || '') : '';
   const [items, setItems] = useState([]);
   const { categories: categoryDocs, names: categories, addCategory: addCategoryApi, removeCategory: removeCategoryApi } = useCategories('menu');
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(querySearch);
   const [categoryFilter, setCategoryFilter] = useState('All Categories');
   const [loading, setLoading] = useState(true);
 
@@ -44,6 +47,10 @@ export default function AdminMenu() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    setSearch(querySearch);
+  }, [querySearch]);
 
   useEffect(() => {
     loadItems();

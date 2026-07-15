@@ -1,8 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
 import ImageUploader from '@/components/admin/ImageUploader';
+import { useSearchParams } from 'next/navigation';
 
 export default function AdminChefs() {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams ? (searchParams.get('search') || '') : '';
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -89,6 +92,12 @@ export default function AdminChefs() {
     }
   }
 
+  const filteredItems = items.filter(chef => 
+    chef.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    chef.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    chef.bio?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -100,11 +109,13 @@ export default function AdminChefs() {
 
       {loading ? (
         <div className="text-center py-8">Loading culinary team...</div>
-      ) : items.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">No chefs found. Add chef profiles to populate.</div>
+      ) : filteredItems.length === 0 ? (
+        <div className="text-center py-8 text-gray-500">
+          {items.length === 0 ? 'No chefs found. Add chef profiles to populate.' : 'No matching chefs found.'}
+        </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map(chef => (
+          {filteredItems.map(chef => (
             <div key={chef._id} className="admin-glass overflow-hidden flex flex-col justify-between">
               <div className="relative aspect-[4/5] bg-gradient-to-br from-brand-100 to-brand-200">
                 {chef.image ? (

@@ -1,9 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export default function AdminReservations() {
+  const searchParams = useSearchParams();
+  const querySearch = searchParams ? (searchParams.get('search') || '') : '';
   const [items, setItems] = useState([]);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(querySearch);
   const [dateFilter, setDateFilter] = useState('');
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,6 +25,10 @@ export default function AdminReservations() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    setSearch(querySearch);
+  }, [querySearch]);
 
   useEffect(() => {
     loadItems();

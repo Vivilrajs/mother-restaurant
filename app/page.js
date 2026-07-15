@@ -3,15 +3,23 @@ import MenuTabsSection from '@/components/home/MenuTabsSection';
 import TestimonialSlider from '@/components/home/TestimonialSlider';
 import { getDb } from '@/lib/mongodb';
 
+const DEFAULT_AWARDS = [
+  { _id: 'default-1', icon: 'fa-star', title: 'UAE Excellence', text: 'Best Family Restaurant 2024' },
+  { _id: 'default-2', icon: 'fa-trophy', title: 'Dubai Food Festival', text: 'Outstanding Chef 2023' },
+  { _id: 'default-3', icon: 'fa-medal', title: "Gulf's 50 Best", text: 'Ranked #8 in 2024' },
+  { _id: 'default-4', icon: 'fa-certificate', title: 'HACCP Certified', text: 'Food Safety Excellence' },
+];
+
 async function getData() {
   try {
     const db = await getDb();
-    const [signature, reviews, blog, gallery, chefs] = await Promise.all([
+    const [signature, reviews, blog, gallery, chefs, awards] = await Promise.all([
       db.collection('menu_items').find({ signature: true }).limit(3).toArray(),
       db.collection('reviews').find({ status: 'approved' }).limit(3).toArray(),
       db.collection('blog_posts').find({ status: 'Published' }).sort({ createdAt: -1 }).limit(3).toArray(),
       db.collection('gallery').find({}).sort({ createdAt: -1 }).limit(6).toArray(),
       db.collection('chefs').find({}).sort({ createdAt: 1 }).limit(1).toArray(),
+      db.collection('awards').find({}).sort({ createdAt: 1 }).toArray(),
     ]);
     const serialize = (arr) => arr.map(item => ({ ...item, _id: item._id.toString() }));
     return {
@@ -20,15 +28,16 @@ async function getData() {
       blog: serialize(blog),
       gallery: serialize(gallery),
       headChef: serialize(chefs)[0] || null,
+      awards: awards.length > 0 ? serialize(awards) : DEFAULT_AWARDS,
     };
   } catch (e) {
     console.error('Error in getData:', e);
-    return { signature: [], reviews: [], blog: [], gallery: [], headChef: null };
+    return { signature: [], reviews: [], blog: [], gallery: [], headChef: null, awards: DEFAULT_AWARDS };
   }
 }
 
 export default async function HomePage() {
-  const { signature, reviews, blog, gallery, headChef } = await getData();
+  const { signature, reviews, blog, gallery, headChef, awards } = await getData();
 
   return (
     <>
@@ -315,20 +324,28 @@ export default async function HomePage() {
           <h2 className="font-serif text-4xl md:text-6xl font-bold mb-6 text-heading">Awards & <span className="text-gradient">Certifications</span></h2>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {[
-            { icon: 'fa-star', title: 'UAE Excellence', text: 'Best Family Restaurant 2024', from: 'from-brand-400', to: 'to-brand-600' },
-            { icon: 'fa-trophy', title: 'Dubai Food Festival', text: 'Outstanding Chef 2023', from: 'from-brand-500', to: 'to-brand-700' },
-            { icon: 'fa-medal', title: "Gulf's 50 Best", text: 'Ranked #8 in 2024', from: 'from-brand-600', to: 'to-brand-800' },
-            { icon: 'fa-certificate', title: 'HACCP Certified', text: 'Food Safety Excellence', from: 'from-brand-700', to: 'to-brand-900' },
-          ].map(({ icon, title, text, from, to }) => (
-            <div key={title} className={`bg-gradient-to-br ${from} ${to} p-8 rounded-2xl text-center shadow-lg hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 border border-white/20`}>
-              <div className="w-16 h-16 mx-auto bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-6 border border-white/20">
-                <i className={`fas ${icon} text-white text-2xl`}></i>
+          {awards.map((award, index) => {
+            const GRADIENTS = [
+              { from: 'from-brand-400', to: 'to-brand-600' },
+              { from: 'from-brand-500', to: 'to-brand-700' },
+              { from: 'from-brand-600', to: 'to-brand-800' },
+              { from: 'from-brand-700', to: 'to-brand-900' },
+            ];
+            const grad = GRADIENTS[index % GRADIENTS.length];
+            return (
+              <div key={award._id} className={`bg-gradient-to-br ${grad.from} ${grad.to} p-8 rounded-2xl text-center shadow-lg hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 border border-white/20 flex flex-col items-center justify-center min-h-[240px]`}>
+                <div className="w-16 h-16 mx-auto bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-6 border border-white/20 overflow-hidden">
+                  {award.image ? (
+                    <img src={award.image} className="w-full h-full object-contain p-2" alt={award.title} />
+                  ) : (
+                    <i className={`fas ${award.icon || 'fa-trophy'} text-white text-2xl`}></i>
+                  )}
+                </div>
+                <h4 className="font-serif font-bold text-xl mb-2 text-white">{award.title}</h4>
+                <p className="text-white/90 text-sm">{award.text}</p>
               </div>
-              <h4 className="font-serif font-bold text-xl mb-2 text-white">{title}</h4>
-              <p className="text-white/90 text-sm">{text}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

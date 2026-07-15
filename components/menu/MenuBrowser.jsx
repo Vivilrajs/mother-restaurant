@@ -10,7 +10,10 @@ export default function MenuBrowser({ items, categories }) {
     const q = search.toLowerCase();
     return items.filter(item => {
       const matchesFilter = filter === 'all' || item.category === filter;
-      const matchesSearch = !q || item.name.toLowerCase().includes(q) || (item.description || '').toLowerCase().includes(q);
+      const matchesSearch = !q || 
+        item.name.toLowerCase().includes(q) || 
+        (item.description || '').toLowerCase().includes(q) ||
+        (item.category || '').toLowerCase().includes(q);
       return matchesFilter && matchesSearch;
     });
   }, [items, search, filter]);
@@ -25,7 +28,8 @@ export default function MenuBrowser({ items, categories }) {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search dishes..."
-            className="form-input w-full pl-12 pr-4 py-3 rounded-full"
+            className="form-input w-full pr-4 py-3 rounded-full"
+            style={{ paddingLeft: '3rem' }}
           />
         </div>
         <div className="flex gap-2 flex-wrap">

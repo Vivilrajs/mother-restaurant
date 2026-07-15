@@ -11,11 +11,10 @@ const NAV = [
   { label:'Gallery', href:'/admin/gallery', icon:'fa-images', group:'Content' },
   { label:'Blog & News', href:'/admin/blog', icon:'fa-pen-nib', group:'Content' },
   { label:'Reviews', href:'/admin/reviews', icon:'fa-star', group:'Content' },
-  { label:'FAQs', href:'/admin/faqs', icon:'fa-question-circle', group:'Content' },
-  { label:'Careers', href:'/admin/careers', icon:'fa-briefcase', group:'Content' },
-  { label:'Homepage', href:'/admin/homepage', icon:'fa-home', group:'Content' },
+  { label:'Messages', href:'/admin/messages', icon:'fa-envelope', group:'Content' },
+  { label:'Awards & Certifications', href:'/admin/awards', icon:'fa-award', group:'Content' },
   { label:'Branches', href:'/admin/branches', icon:'fa-map-marker-alt', group:'System' },
-  { label:'Settings', href:'/admin/settings', icon:'fa-cog', group:'System' },
+  { label:'Settings', href:'/admin/settings', icon:'fa-cog', group:'System' }
 ];
 
 export default function AdminSidebar({ onClose }) {
