@@ -43,6 +43,7 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-[#c8b5b0] text-sm">© 2025 The Mother Restaurant. All rights reserved.</p>
           <div className="flex gap-6">
+            <Link href="/faqs" className="text-[#c8b5b0] text-sm hover:text-brand-400 transition">FAQs</Link>
             <a href="#" className="text-[#c8b5b0] text-sm hover:text-brand-400 transition">Privacy Policy</a>
             <a href="#" className="text-[#c8b5b0] text-sm hover:text-brand-400 transition">Terms of Service</a>
           </div>

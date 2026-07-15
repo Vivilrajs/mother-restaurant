@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export default function TestimonialSlider({ reviews }) {
   const [idx, setIdx] = useState(0);
@@ -8,7 +8,14 @@ export default function TestimonialSlider({ reviews }) {
     { customerName:'James Chen', rating:5, text:"From the moment we walked in, we felt like family. The omakase experience was a journey through flavors I'll never forget.", role:'Business Executive, Dubai' },
   ];
 
-  const go = (dir) => setIdx((idx + dir + items.length) % items.length);
+  const go = useCallback((dir) => setIdx((i) => (i + dir + items.length) % items.length), [items.length]);
+
+  useEffect(() => {
+    if (items.length <= 1) return;
+    const timer = setInterval(() => go(1), 5000);
+    return () => clearInterval(timer);
+  }, [go, items.length, idx]);
+
   const item = items[idx];
 
   return (

@@ -1,9 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
+import ImageUploader from '@/components/admin/ImageUploader';
+import useCategories from '@/components/admin/useCategories';
 
 export default function AdminMenu() {
   const [items, setItems] = useState([]);
-  const [categories, setCategories] = useState(['Breakfast', 'Lunch', 'Dinner', 'Desserts', 'Beverages']);
+  const { categories: categoryDocs, names: categories, addCategory: addCategoryApi, removeCategory: removeCategoryApi } = useCategories('menu');
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All Categories');
   const [loading, setLoading] = useState(true);
@@ -11,9 +13,12 @@ export default function AdminMenu() {
   // Edit/Add modal state
   const [itemModal, setItemModal] = useState(false);
   const [editItem, setEditItem] = useState(null);
-  const [formData, setFormData] = useState({
-    name: '', category: 'Dinner', price: '', prepTime: '', status: 'available', signature: false, description: '', badge: '', image: ''
-  });
+  const emptyForm = {
+    name: '', category: 'Dinner', price: '', prepTime: '', status: 'available', signature: false, description: '', badge: '', image: '',
+    ingredients: '', allergens: '', pairingSuggestion: '',
+    nutritionCalories: '', nutritionProtein: '', nutritionFat: '', nutritionCarbs: ''
+  };
+  const [formData, setFormData] = useState(emptyForm);
 
   // Category manage modal state
   const [categoryModal, setCategoryModal] = useState(false);
@@ -46,9 +51,7 @@ export default function AdminMenu() {
 
   function openAddModal() {
     setEditItem(null);
-    setFormData({
-      name: '', category: categories[0] || 'Dinner', price: '', prepTime: '', status: 'available', signature: false, description: '', badge: '', image: ''
-    });
+    setFormData({ ...emptyForm, category: categories[0] || 'Dinner' });
     setItemModal(true);
   }
 
@@ -63,17 +66,36 @@ export default function AdminMenu() {
       signature: !!item.signature,
       description: item.description || '',
       badge: item.badge || '',
-      image: item.image || ''
+      image: item.image || '',
+      ingredients: Array.isArray(item.ingredients) ? item.ingredients.join(', ') : '',
+      allergens: Array.isArray(item.allergens) ? item.allergens.join(', ') : '',
+      pairingSuggestion: item.pairingSuggestion || '',
+      nutritionCalories: item.nutrition?.calories || '',
+      nutritionProtein: item.nutrition?.protein || '',
+      nutritionFat: item.nutrition?.fat || '',
+      nutritionCarbs: item.nutrition?.carbs || ''
     });
     setItemModal(true);
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    const {
+      ingredients, allergens, pairingSuggestion,
+      nutritionCalories, nutritionProtein, nutritionFat, nutritionCarbs,
+      ...rest
+    } = formData;
+    const hasNutrition = nutritionCalories || nutritionProtein || nutritionFat || nutritionCarbs;
     const payload = {
-      ...formData,
+      ...rest,
       price: String(formData.price),
       prepTime: String(formData.prepTime),
+      ingredients: ingredients ? ingredients.split(',').map(s => s.trim()).filter(Boolean) : [],
+      allergens: allergens ? allergens.split(',').map(s => s.trim()).filter(Boolean) : [],
+      pairingSuggestion: pairingSuggestion || '',
+      nutrition: hasNutrition ? {
+        calories: nutritionCalories, protein: nutritionProtein, fat: nutritionFat, carbs: nutritionCarbs
+      } : null,
     };
     try {
       let res;
@@ -112,14 +134,8 @@ export default function AdminMenu() {
   function addCategory(e) {
     e.preventDefault();
     if (!newCategoryName) return;
-    if (!categories.includes(newCategoryName)) {
-      setCategories([...categories, newCategoryName]);
-    }
+    addCategoryApi(newCategoryName);
     setNewCategoryName('');
-  }
-
-  function removeCategory(cat) {
-    setCategories(categories.filter(c => c !== cat));
   }
 
   return (
@@ -244,9 +260,14 @@ export default function AdminMenu() {
                   <label className="block text-sm font-bold mb-2">Badge (Optional)</label>
                   <input type="text" value={formData.badge} onChange={e => setFormData({ ...formData, badge: e.target.value })} className="form-input bg-white" placeholder="e.g. SIGNATURE, CHEF'S PICK" />
                 </div>
-                <div>
-                  <label className="block text-sm font-bold mb-2">Image URL (Optional)</label>
-                  <input type="text" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} className="form-input bg-white" placeholder="e.g. https://example.com/image.png" />
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-bold mb-2">Featured Image</label>
+                  <ImageUploader
+                    folder="menu"
+                    value={formData.image}
+                    onChange={(url) => setFormData({ ...formData, image: url })}
+                    label="Upload Featured Image"
+                  />
                 </div>
                 <div className="md:col-span-2 flex items-center gap-3 p-4 bg-brand-50 rounded-lg border border-brand-600/20">
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -261,6 +282,30 @@ export default function AdminMenu() {
                 <div className="md:col-span-2">
                   <label className="block text-sm font-bold mb-2">Detailed Description</label>
                   <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="form-input bg-white" rows="4" placeholder="Describe the ingredients, flavors, and presentation..."></textarea>
+                </div>
+                <div className="md:col-span-2 pt-4 border-t border-brand-600/10">
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Dish Details (Optional)</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold mb-2">Ingredients (comma separated)</label>
+                  <input type="text" value={formData.ingredients} onChange={e => setFormData({ ...formData, ingredients: e.target.value })} className="form-input bg-white" placeholder="e.g. A5 Wagyu Beef, Truffle, Gold Leaf" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold mb-2">Allergens (comma separated)</label>
+                  <input type="text" value={formData.allergens} onChange={e => setFormData({ ...formData, allergens: e.target.value })} className="form-input bg-white" placeholder="e.g. Dairy, Gluten, Nuts" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-bold mb-2">Pairing Suggestion</label>
+                  <input type="text" value={formData.pairingSuggestion} onChange={e => setFormData({ ...formData, pairingSuggestion: e.target.value })} className="form-input bg-white" placeholder="e.g. Château Margaux 2015 or our signature Mother's Red Blend" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-bold mb-2">Nutrition Facts (per serving)</label>
+                  <div className="grid grid-cols-4 gap-3">
+                    <input type="number" value={formData.nutritionCalories} onChange={e => setFormData({ ...formData, nutritionCalories: e.target.value })} className="form-input bg-white" placeholder="Calories" />
+                    <input type="number" value={formData.nutritionProtein} onChange={e => setFormData({ ...formData, nutritionProtein: e.target.value })} className="form-input bg-white" placeholder="Protein (g)" />
+                    <input type="number" value={formData.nutritionFat} onChange={e => setFormData({ ...formData, nutritionFat: e.target.value })} className="form-input bg-white" placeholder="Fat (g)" />
+                    <input type="number" value={formData.nutritionCarbs} onChange={e => setFormData({ ...formData, nutritionCarbs: e.target.value })} className="form-input bg-white" placeholder="Carbs (g)" />
+                  </div>
                 </div>
               </div>
               <div className="flex justify-end gap-3 pt-4 border-t border-brand-600/10 mt-6">
@@ -293,10 +338,10 @@ export default function AdminMenu() {
                 <button type="submit" className="btn-premium px-4 py-2 rounded-lg font-bold"><i className="fas fa-plus"></i></button>
               </form>
               <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
-                {categories.map(cat => (
-                  <div key={cat} className="flex justify-between items-center bg-white p-3 rounded-lg border border-brand-600/10">
-                    <span className="font-semibold text-[#2d2422]">{cat}</span>
-                    <button onClick={() => removeCategory(cat)} className="text-red-500 hover:text-red-700 p-1"><i className="fas fa-trash-alt"></i></button>
+                {categoryDocs.map(cat => (
+                  <div key={cat._id} className="flex justify-between items-center bg-white p-3 rounded-lg border border-brand-600/10">
+                    <span className="font-semibold text-[#2d2422]">{cat.name}</span>
+                    <button onClick={() => removeCategoryApi(cat._id)} className="text-red-500 hover:text-red-700 p-1"><i className="fas fa-trash-alt"></i></button>
                   </div>
                 ))}
               </div>

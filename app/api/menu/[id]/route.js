@@ -4,8 +4,9 @@ import { ObjectId } from 'mongodb';
 
 export async function GET(_, { params }) {
   try {
+    const { id } = await params;
     const db = await getDb();
-    const item = await db.collection('menu_items').findOne({ _id: new ObjectId(params.id) });
+    const item = await db.collection('menu_items').findOne({ _id: new ObjectId(id) });
     if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     return NextResponse.json(item);
   } catch (e) {
@@ -15,11 +16,12 @@ export async function GET(_, { params }) {
 
 export async function PUT(request, { params }) {
   try {
+    const { id } = await params;
     const db = await getDb();
     const body = await request.json();
     delete body._id;
     const result = await db.collection('menu_items').findOneAndUpdate(
-      { _id: new ObjectId(params.id) },
+      { _id: new ObjectId(id) },
       { $set: { ...body, updatedAt: new Date() } },
       { returnDocument: 'after' }
     );
@@ -31,8 +33,9 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(_, { params }) {
   try {
+    const { id } = await params;
     const db = await getDb();
-    await db.collection('menu_items').deleteOne({ _id: new ObjectId(params.id) });
+    await db.collection('menu_items').deleteOne({ _id: new ObjectId(id) });
     return NextResponse.json({ success: true });
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 });

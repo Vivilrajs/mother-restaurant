@@ -1,5 +1,12 @@
 import Link from 'next/link';
+import CateringQuoteForm from '@/components/catering/CateringQuoteForm';
 export const metadata = { title: 'Catering Services — The Mother Restaurant' };
+
+const eventTypes = [
+  { icon: 'fa-ring', title: 'Wedding Catering', text: 'Make your special day unforgettable with bespoke wedding menus.' },
+  { icon: 'fa-briefcase', title: 'Corporate Events', text: 'Impress clients and team with world-class catering.' },
+  { icon: 'fa-birthday-cake', title: 'Family Parties', text: 'Celebrate in style with custom menus and desserts.' },
+];
 const tiers = [
   { name:'Classic', price:'AED 150', unit:'per person',tag:'Most Popular', min:'30',features:['3-course set menu','Service staff included','Linen and tableware','Canapes & drinks reception','Dietary options available'] },
   { name:'Premium', price:'AED 250', unit:'per person',tag:'Best Value', min:'50',features:['5-course tasting menu','Dedicated event manager','Custom menu design','Premium bar & mocktails','Live cooking station','Decor coordination'] },
@@ -19,6 +26,17 @@ export default function CateringPage() {
           <div className="text-center mb-16">
             <h2 className="font-serif text-4xl font-bold text-heading mb-4">Catering <span className="text-gradient">Packages</span></h2>
             <p className="text-muted max-w-2xl mx-auto">From intimate family gatherings to grand corporate events, we bring the warmth of The Mother Restaurant to any venue.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            {eventTypes.map(({ icon, title, text }) => (
+              <div key={title} className="glass-card rounded-2xl p-8 text-center">
+                <div className="w-14 h-14 mx-auto bg-brand-600/10 rounded-xl flex items-center justify-center mb-6">
+                  <i className={`fas ${icon} text-brand-600 text-2xl`}></i>
+                </div>
+                <h3 className="font-serif text-xl font-bold mb-2 text-heading">{title}</h3>
+                <p className="text-muted text-sm">{text}</p>
+              </div>
+            ))}
           </div>
           <div className="grid md:grid-cols-3 gap-8 mb-16">
             {tiers.map((t,i) => (
@@ -41,13 +59,8 @@ export default function CateringPage() {
               </div>
             ))}
           </div>
-          <div className="glass-card rounded-3xl p-8 text-center">
-            <h3 className="font-serif text-2xl font-bold text-heading mb-3">Planning a Corporate or Private Event?</h3>
-            <p className="text-muted mb-6">Our dedicated event team will work with you to create a bespoke experience for any occasion.</p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <a href="tel:+97144000000" className="btn-premium px-8 py-3 rounded-full font-semibold inline-flex items-center gap-2"><i className="fas fa-phone"></i> Call Us</a>
-              <Link href="/contact" className="view-all-btn"><span>Send Enquiry</span></Link>
-            </div>
+          <div className="glass-card rounded-3xl p-8 md:p-12">
+            <CateringQuoteForm />
           </div>
         </div>
       </section>

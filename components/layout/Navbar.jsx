@@ -43,6 +43,7 @@ export default function Navbar() {
     { label: 'Menu', children: [
       { href: '/menu', label: 'All Menu' },
       { href: '/catering', label: 'Catering' },
+      { href: '/private-dining', label: 'Private Dining' },
     ]},
     { href: '/gallery', label: 'Gallery' },
     { href: '/blog', label: 'Blog' },
@@ -104,7 +105,7 @@ export default function Navbar() {
             <button onClick={() => setMobileOpen(false)} className="w-10 h-10 flex items-center justify-center text-white"><i className="fas fa-times text-2xl"></i></button>
           </div>
           <div className="flex flex-col gap-6">
-            {[{href:'/',l:'Home'},{href:'/about',l:'About'},{href:'/story',l:'Our Story'},{href:'/menu',l:'Menu'},{href:'/chef',l:'Chef'},{href:'/gallery',l:'Gallery'},{href:'/blog',l:'Blog'},{href:'/testimonials',l:'Reviews'},{href:'/contact',l:'Contact'},{href:'/admin',l:'Admin Panel'}].map(({href,l}) => (
+            {[{href:'/',l:'Home'},{href:'/about',l:'About'},{href:'/story',l:'Our Story'},{href:'/menu',l:'Menu'},{href:'/chef',l:'Chef'},{href:'/gallery',l:'Gallery'},{href:'/blog',l:'Blog'},{href:'/testimonials',l:'Reviews'},{href:'/private-dining',l:'Private Dining'},{href:'/faqs',l:'FAQs'},{href:'/contact',l:'Contact'},{href:'/admin',l:'Admin Panel'}].map(({href,l}) => (
               <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="text-2xl font-serif hover:text-brand-400 transition text-white">{l}</Link>
             ))}
             <Link href="/reservation" onClick={() => setMobileOpen(false)} className="btn-premium px-6 py-3 rounded-full text-center font-semibold mt-4">Reserve a Table</Link>

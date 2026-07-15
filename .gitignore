@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# local mock uploads (dev-only S3 fallback, see lib/s3.js)
+/public/uploads
+
 # debug
 npm-debug.log*
 yarn-debug.log*

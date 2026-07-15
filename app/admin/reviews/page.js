@@ -5,10 +5,15 @@ export default function AdminReviews() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('pending');
+  const [menuItems, setMenuItems] = useState([]);
 
   // Add review modal state
   const [modal, setModal] = useState(false);
-  const [formData, setFormData] = useState({ customerName: '', rating: 5, text: '', role: '', source: 'Google', status: 'approved' });
+  const [formData, setFormData] = useState({ customerName: '', rating: 5, text: '', role: '', source: 'Google', status: 'approved', menuItemId: '' });
+
+  useEffect(() => {
+    fetch('/api/menu').then(r => r.json()).then(data => setMenuItems(Array.isArray(data) ? data : [])).catch(() => {});
+  }, []);
 
   async function loadItems() {
     setLoading(true);
@@ -52,15 +57,16 @@ export default function AdminReviews() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    const payload = { ...formData, menuItemId: formData.menuItemId || null };
     try {
       const res = await fetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
       if (res.ok) {
         setModal(false);
-        setFormData({ customerName: '', rating: 5, text: '', role: '', source: 'Google', status: 'approved' });
+        setFormData({ customerName: '', rating: 5, text: '', role: '', source: 'Google', status: 'approved', menuItemId: '' });
         loadItems();
       }
     } catch (e) {
@@ -153,6 +159,13 @@ export default function AdminReviews() {
               <div>
                 <label className="block text-sm font-bold mb-1">Source (e.g., Google, TripAdvisor)</label>
                 <input type="text" value={formData.source} onChange={e => setFormData({ ...formData, source: e.target.value })} className="form-input bg-white" placeholder="Google" />
+              </div>
+              <div>
+                <label className="block text-sm font-bold mb-1">Menu Item (Optional)</label>
+                <select value={formData.menuItemId} onChange={e => setFormData({ ...formData, menuItemId: e.target.value })} className="form-input bg-white">
+                  <option value="">General review (not dish-specific)</option>
+                  {menuItems.map(m => <option key={m._id} value={m._id}>{m.name}</option>)}
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-bold mb-1">Review Text</label>

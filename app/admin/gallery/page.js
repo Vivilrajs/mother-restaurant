@@ -1,15 +1,21 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import useCategories from '@/components/admin/useCategories';
 
 export default function AdminGallery() {
   const [items, setItems] = useState([]);
-  const [categories, setCategories] = useState(['food', 'ambiance', 'events']);
+  const { categories: categoryDocs, names: categories, addCategory: addCategoryApi, removeCategory: removeCategoryApi } = useCategories('gallery');
   const [activeCategory, setActiveCategory] = useState('All');
   const [loading, setLoading] = useState(true);
 
-  // Edit/Add modal state
+  // Upload modal state
   const [modal, setModal] = useState(false);
-  const [formData, setFormData] = useState({ url: '', alt: '', category: 'food' });
+  const [pendingFiles, setPendingFiles] = useState([]);
+  const [altText, setAltText] = useState('');
+  const [uploadCategory, setUploadCategory] = useState('food');
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const fileInputRef = useRef(null);
 
   // Category manage modal state
   const [categoryModal, setCategoryModal] = useState(false);
@@ -32,35 +38,49 @@ export default function AdminGallery() {
     loadItems();
   }, []);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    try {
-      const res = await fetch('/api/gallery', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      if (res.ok) {
-        setModal(false);
-        setFormData({ url: '', alt: '', category: 'food' });
-        loadItems();
-      }
-    } catch (e) {
-      console.error(e);
-    }
+  function openUploadModal() {
+    setPendingFiles([]);
+    setAltText('');
+    setUploadCategory(categories[0] || 'food');
+    setUploadError('');
+    setModal(true);
   }
 
-  async function deleteItem(id) {
-    if (!confirm('Are you sure you want to delete this gallery item?')) return;
+  function handleFilePick(fileList) {
+    setPendingFiles(Array.from(fileList || []));
+  }
+
+  async function handleUploadSubmit(e) {
+    e.preventDefault();
+    if (pendingFiles.length === 0) {
+      setUploadError('Choose at least one image.');
+      return;
+    }
+    setUploading(true);
+    setUploadError('');
     try {
-      // In the API, we can just delete from DB
-      // We didn't define a /api/gallery/[id] endpoint, let's write delete logic or delete via API
-      // Since we don't have gallery/[id] DELETE, let's make sure it deletes by calling the endpoint. Let's see if we should create a DELETE handler in route.js or create /api/gallery/[id].
-      // Let's call /api/gallery with a method or use a generic DELETE route. Wait, in app/api/gallery/route.js we don't have DELETE. Let's write a simple DELETE handler inside route.js by matching request query/body or create a detail route.
-      // Let's modify app/api/gallery/route.js to support DELETE by ID, or create app/api/gallery/[id]/route.js. Let's write app/api/gallery/[id]/route.js. Wait, editing is easier or we can do it directly. Let's write app/api/gallery/[id]/route.js! Or, to keep file count lower, we can handle DELETE in app/api/gallery/route.js! Yes! Let's check how we can do it. In Next.js, app/api/gallery/route.js can have DELETE:
-      // Let's create `app/api/gallery/[id]/route.js` to match consistent CRUD pattern in other components!
+      const formData = new FormData();
+      formData.append('folder', 'gallery');
+      pendingFiles.forEach((file) => formData.append('files', file));
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
+
+      for (let i = 0; i < data.files.length; i++) {
+        const alt = pendingFiles.length > 1 ? `${altText || 'Gallery image'} ${i + 1}` : (altText || 'Gallery image');
+        await fetch('/api/gallery', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: data.files[i].url, alt, category: uploadCategory })
+        });
+      }
+
+      setModal(false);
+      loadItems();
     } catch (e) {
-      console.error(e);
+      setUploadError(e.message);
+    } finally {
+      setUploading(false);
     }
   }
 
@@ -83,8 +103,8 @@ export default function AdminGallery() {
           <button onClick={() => setCategoryModal(true)} className="px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 w-full sm:w-auto justify-center border border-brand-600 text-brand-600 hover:bg-brand-50 transition bg-white">
             <i className="fas fa-tags"></i> Categories
           </button>
-          <button onClick={() => setModal(true)} className="btn-premium px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 w-full sm:w-auto justify-center">
-            <i className="fas fa-cloud-upload-alt"></i> Add Image URL
+          <button onClick={openUploadModal} className="btn-premium px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 w-full sm:w-auto justify-center">
+            <i className="fas fa-cloud-upload-alt"></i> Upload Images
           </button>
         </div>
       </div>
@@ -112,32 +132,51 @@ export default function AdminGallery() {
         </div>
       )}
 
-      {/* Add Gallery Image Modal */}
+      {/* Upload Gallery Images Modal */}
       {modal && (
         <div className="admin-modal active">
           <div className="admin-modal-content relative max-w-md">
             <div className="sticky top-0 bg-white p-4 md:p-6 border-b border-brand-600/10 flex justify-between items-center z-10 rounded-t-2xl">
-              <h2 className="font-serif text-xl font-bold text-brand-700">Add Gallery Image</h2>
+              <h2 className="font-serif text-xl font-bold text-brand-700">Upload Gallery Images</h2>
               <button onClick={() => setModal(false)} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-red-100 hover:text-red-600 transition"><i className="fas fa-times"></i></button>
             </div>
-            <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-4 bg-[#fdfbf7]">
-              <div>
-                <label className="block text-sm font-bold mb-1">Image URL</label>
-                <input type="url" required value={formData.url} onChange={e => setFormData({ ...formData, url: e.target.value })} className="form-input bg-white" placeholder="https://example.com/image.jpg" />
+            <form onSubmit={handleUploadSubmit} className="p-4 md:p-6 space-y-4 bg-[#fdfbf7]">
+              <div
+                className="p-6 border-2 border-dashed border-brand-600/30 rounded-xl text-center bg-white cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => { e.preventDefault(); handleFilePick(e.dataTransfer.files); }}
+              >
+                <i className="fas fa-cloud-upload-alt text-4xl text-brand-400 mb-2"></i>
+                <p className="font-semibold text-[#2d2422]">
+                  {pendingFiles.length > 0 ? `${pendingFiles.length} image${pendingFiles.length > 1 ? 's' : ''} selected` : 'Click or drag images here'}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">PNG, JPG or WEBP up to 5MB each. Select multiple to upload in bulk.</p>
+                <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleFilePick(e.target.files)} />
               </div>
+              {pendingFiles.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {pendingFiles.map((f, i) => (
+                    <span key={i} className="text-xs bg-brand-50 text-brand-700 px-2 py-1 rounded-full border border-brand-200">{f.name}</span>
+                  ))}
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-bold mb-1">Alt Text</label>
-                <input type="text" required value={formData.alt} onChange={e => setFormData({ ...formData, alt: e.target.value })} className="form-input bg-white" placeholder="Description of the image" />
+                <input type="text" value={altText} onChange={e => setAltText(e.target.value)} className="form-input bg-white" placeholder="Description of the image(s)" />
               </div>
               <div>
                 <label className="block text-sm font-bold mb-1">Category</label>
-                <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} className="form-input bg-white">
+                <select value={uploadCategory} onChange={e => setUploadCategory(e.target.value)} className="form-input bg-white">
                   {categories.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
+              {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
               <div className="flex justify-end gap-3 pt-4 border-t border-brand-600/10">
                 <button type="button" onClick={() => setModal(false)} className="px-6 py-2.5 rounded-lg font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300">Cancel</button>
-                <button type="submit" className="btn-premium px-8 py-2.5 rounded-lg font-bold">Add Image</button>
+                <button type="submit" disabled={uploading} className="btn-premium px-8 py-2.5 rounded-lg font-bold disabled:opacity-50">
+                  {uploading ? 'Uploading...' : 'Upload'}
+                </button>
               </div>
             </form>
           </div>
@@ -155,9 +194,7 @@ export default function AdminGallery() {
             <div className="p-4 md:p-6 bg-[#fdfbf7]">
               <form onSubmit={e => {
                 e.preventDefault();
-                if (newCategoryName && !categories.includes(newCategoryName)) {
-                  setCategories([...categories, newCategoryName]);
-                }
+                addCategoryApi(newCategoryName);
                 setNewCategoryName('');
               }} className="flex gap-2 mb-6">
                 <input
@@ -171,10 +208,10 @@ export default function AdminGallery() {
                 <button type="submit" className="btn-premium px-4 py-2 rounded-lg font-bold"><i className="fas fa-plus"></i></button>
               </form>
               <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
-                {categories.map(cat => (
-                  <div key={cat} className="flex justify-between items-center bg-white p-3 rounded-lg border border-brand-600/10">
-                    <span className="font-semibold text-[#2d2422] capitalize">{cat}</span>
-                    <button onClick={() => setCategories(categories.filter(c => c !== cat))} className="text-red-500 hover:text-red-700 p-1"><i className="fas fa-trash-alt"></i></button>
+                {categoryDocs.map(cat => (
+                  <div key={cat._id} className="flex justify-between items-center bg-white p-3 rounded-lg border border-brand-600/10">
+                    <span className="font-semibold text-[#2d2422] capitalize">{cat.name}</span>
+                    <button onClick={() => removeCategoryApi(cat._id)} className="text-red-500 hover:text-red-700 p-1"><i className="fas fa-trash-alt"></i></button>
                   </div>
                 ))}
               </div>

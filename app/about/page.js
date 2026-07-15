@@ -33,6 +33,34 @@ export default function AboutPage() {
 
       <section className="py-24 section-cream">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[['1998','Founded in Dubai'],['2010','UAE Excellence Award'],['2018','Abu Dhabi Branch'],['2024',"Gulf's #8"]].map(([n,l]) => (
+              <div key={n} className="border-l-2 border-brand-600 pl-4">
+                <div className="font-serif text-3xl font-bold text-brand-600">{n}</div>
+                <div className="text-sm text-muted">{l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 section-warm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-8">
+          <div className="glass-card p-10 rounded-2xl">
+            <i className="fas fa-eye text-brand-600 text-3xl mb-6"></i>
+            <h3 className="font-serif text-2xl font-bold mb-4 text-heading">Our Vision</h3>
+            <p className="text-muted">To be the UAE&apos;s most beloved family dining destination, where every meal feels like home and every guest becomes family.</p>
+          </div>
+          <div className="glass-card p-10 rounded-2xl">
+            <i className="fas fa-heart text-brand-600 text-3xl mb-6"></i>
+            <h3 className="font-serif text-2xl font-bold mb-4 text-heading">Our Mission</h3>
+            <p className="text-muted">To preserve and share the warmth of mother&apos;s cooking through extraordinary culinary experiences rooted in love and tradition.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 section-cream">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-serif text-4xl md:text-5xl font-bold text-heading">Our <span className="text-gradient">Values</span></h2>
           </div>

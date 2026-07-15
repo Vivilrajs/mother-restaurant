@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getDb } from '@/lib/mongodb';
 export const metadata = { title: 'Blog & News — The Mother Restaurant' };
 
@@ -21,7 +22,7 @@ export default async function BlogPage() {
           {posts.length === 0 && <div className="text-center py-20 text-muted">No posts published yet.</div>}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map(post => (
-              <article key={post._id.toString()} className="menu-card group rounded-2xl overflow-hidden bg-white dark:bg-[#1f1816] shadow-md border border-brand-600/10">
+              <Link key={post._id.toString()} href={`/blog/${post._id}`} className="menu-card group rounded-2xl overflow-hidden bg-white dark:bg-[#1f1816] shadow-md border border-brand-600/10 block">
                 {post.featuredImage && (
                   <div className="relative overflow-hidden aspect-video">
                     <img src={post.featuredImage} className="menu-img w-full h-full object-cover" alt={post.title} />
@@ -37,7 +38,7 @@ export default async function BlogPage() {
                     {post.readTime && <span className="text-xs bg-brand-50 text-brand-700 px-3 py-1 rounded-full">{post.readTime}</span>}
                   </div>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         </div>

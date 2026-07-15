@@ -1,6 +1,5 @@
 import './globals.css';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
+import SiteChrome from '@/components/layout/SiteChrome';
 
 export const metadata = {
   title: 'The Mother Restaurant — Love is Her Secret Ingredient',
@@ -18,13 +17,7 @@ export default function RootLayout({ children }) {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
       </head>
       <body className="overflow-x-hidden">
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        <a href="https://wa.me/97144000000" className="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
-          <i className="fab fa-whatsapp text-white text-2xl"></i>
-        </a>
-        <div id="toast" className="fixed bottom-24 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full text-sm font-semibold z-[300] opacity-0 transition-opacity duration-300 pointer-events-none shadow-xl"></div>
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );

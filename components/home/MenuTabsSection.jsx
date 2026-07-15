@@ -3,14 +3,20 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 const CATEGORIES = ['all','Breakfast','Lunch','Dinner','Beverages','Desserts'];
-const COUNTS = { all:20, Breakfast:6, Lunch:3, Dinner:4, Beverages:4, Desserts:3 };
 
 export default function MenuTabsSection() {
   const [active, setActive] = useState('all');
   const [items, setItems] = useState([]);
+  const [counts, setCounts] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    fetch('/api/menu').then(r => r.json()).then(all => {
+      if (!Array.isArray(all)) return;
+      const c = { all: all.length };
+      for (const item of all) c[item.category] = (c[item.category] || 0) + 1;
+      setCounts(c);
+    });
     fetchItems('all');
   }, []);
 
@@ -36,7 +42,7 @@ export default function MenuTabsSection() {
             className={`category-tab ${active === cat ? 'active' : ''}`}>
             <i className={`fas ${cat==='all'?'fa-th-large':cat==='Breakfast'?'fa-coffee':cat==='Lunch'?'fa-hamburger':cat==='Dinner'?'fa-utensils':cat==='Beverages'?'fa-cocktail':'fa-ice-cream'}`}></i>
             {cat === 'all' ? 'All Items' : cat}
-            <span className="tab-count">{COUNTS[cat]}</span>
+            <span className="tab-count">{counts[cat] ?? 0}</span>
           </button>
         ))}
       </div>

@@ -1,9 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
+import ImageUploader from '@/components/admin/ImageUploader';
+import useCategories from '@/components/admin/useCategories';
 
 export default function AdminBlog() {
   const [items, setItems] = useState([]);
-  const [categories, setCategories] = useState(['Recipe', 'Events', 'Tips']);
+  const { categories: categoryDocs, names: categories, addCategory: addCategoryApi, removeCategory: removeCategoryApi } = useCategories('blog');
   const [loading, setLoading] = useState(true);
 
   // Edit/Add modal state
@@ -210,13 +212,17 @@ export default function AdminBlog() {
                     <input type="text" value={formData.readTime} onChange={e => setFormData({ ...formData, readTime: e.target.value })} className="form-input" placeholder="e.g. 5 min read" />
                   </div>
                   <div>
-                    <label className="block text-sm mb-1">Featured Image URL (Optional)</label>
-                    <input type="text" value={formData.featuredImage} onChange={e => setFormData({ ...formData, featuredImage: e.target.value })} className="form-input" placeholder="e.g. https://example.com/blog.jpg" />
-                  </div>
-                  <div>
                     <label className="block text-sm mb-1">Tags (comma separated)</label>
                     <input type="text" value={formData.tags} onChange={e => setFormData({ ...formData, tags: e.target.value })} className="form-input" placeholder="e.g. Wagyu, Fine Dining" />
                   </div>
+                </div>
+                <div className="admin-glass p-5 bg-white">
+                  <h3 className="font-bold border-b pb-2 mb-4">Featured Image</h3>
+                  <ImageUploader
+                    folder="blog"
+                    value={formData.featuredImage}
+                    onChange={(url) => setFormData({ ...formData, featuredImage: url })}
+                  />
                 </div>
                 <button type="submit" className="btn-premium w-full py-2.5 rounded-lg font-bold">Save Post</button>
               </div>
@@ -236,9 +242,7 @@ export default function AdminBlog() {
             <div className="p-4 md:p-6 bg-[#fdfbf7]">
               <form onSubmit={e => {
                 e.preventDefault();
-                if (newCategoryName && !categories.includes(newCategoryName)) {
-                  setCategories([...categories, newCategoryName]);
-                }
+                addCategoryApi(newCategoryName);
                 setNewCategoryName('');
               }} className="flex gap-2 mb-6">
                 <input
@@ -252,10 +256,10 @@ export default function AdminBlog() {
                 <button type="submit" className="btn-premium px-4 py-2 rounded-lg font-bold"><i className="fas fa-plus"></i></button>
               </form>
               <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
-                {categories.map(cat => (
-                  <div key={cat} className="flex justify-between items-center bg-white p-3 rounded-lg border border-brand-600/10">
-                    <span className="font-semibold text-[#2d2422]">{cat}</span>
-                    <button onClick={() => setCategories(categories.filter(c => c !== cat))} className="text-red-500 hover:text-red-700 p-1"><i className="fas fa-trash-alt"></i></button>
+                {categoryDocs.map(cat => (
+                  <div key={cat._id} className="flex justify-between items-center bg-white p-3 rounded-lg border border-brand-600/10">
+                    <span className="font-semibold text-[#2d2422]">{cat.name}</span>
+                    <button onClick={() => removeCategoryApi(cat._id)} className="text-red-500 hover:text-red-700 p-1"><i className="fas fa-trash-alt"></i></button>
                   </div>
                 ))}
               </div>

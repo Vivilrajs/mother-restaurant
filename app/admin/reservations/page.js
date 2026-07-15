@@ -135,6 +135,7 @@ export default function AdminReservations() {
                 <p><strong>Date & Time:</strong> {selected.date} at {selected.time}</p>
                 <p><strong>Phone:</strong> {selected.phone}</p>
                 <p><strong>Email:</strong> {selected.email}</p>
+                <p><strong>Seating Preference:</strong> {selected.seating || 'No Preference'}</p>
                 <p><strong>Special Requests:</strong> {selected.requests || 'None'}</p>
                 <p><strong>Status:</strong> <span className={`status-badge capitalize ${selected.status === 'confirmed' ? 'status-active' : selected.status === 'cancelled' ? 'status-out' : 'status-draft'}`}>{selected.status}</span></p>
               </div>

@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import ImageUploader from '@/components/admin/ImageUploader';
 
 export default function AdminChefs() {
   const [items, setItems] = useState([]);
@@ -9,7 +10,7 @@ export default function AdminChefs() {
   const [modal, setModal] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [formData, setFormData] = useState({
-    name: '', title: '', experience: '', bio: '', image: '', instagram: '', linkedin: ''
+    name: '', title: '', experience: '', bio: '', image: '', instagram: '', linkedin: '', philosophy: ''
   });
 
   async function loadItems() {
@@ -32,7 +33,7 @@ export default function AdminChefs() {
   function openAddModal() {
     setEditItem(null);
     setFormData({
-      name: '', title: '', experience: '', bio: '', image: '', instagram: '', linkedin: ''
+      name: '', title: '', experience: '', bio: '', image: '', instagram: '', linkedin: '', philosophy: ''
     });
     setModal(true);
   }
@@ -46,7 +47,8 @@ export default function AdminChefs() {
       bio: chef.bio || '',
       image: chef.image || '',
       instagram: chef.instagram || '',
-      linkedin: chef.linkedin || ''
+      linkedin: chef.linkedin || '',
+      philosophy: chef.philosophy || ''
     });
     setModal(true);
   }
@@ -146,36 +148,46 @@ export default function AdminChefs() {
               <button onClick={() => setModal(false)} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-red-100 hover:text-red-600 transition"><i className="fas fa-times"></i></button>
             </div>
             <form onSubmit={handleSubmit} className="p-4 md:p-8 space-y-6 bg-[#fdfbf7]">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-bold mb-1">Full Name</label>
-                  <input type="text" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="form-input bg-white" placeholder="Chef Name" />
+              <div className="flex flex-col md:flex-row gap-6 md:gap-8">
+                <div className="w-full md:w-1/3">
+                  <ImageUploader
+                    variant="avatar"
+                    folder="chefs"
+                    value={formData.image}
+                    onChange={(url) => setFormData({ ...formData, image: url })}
+                  />
                 </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1">Title / Specialization</label>
-                  <input type="text" required value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} className="form-input bg-white" placeholder="e.g. Executive Chef, Pastry Master" />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1">Years of Experience</label>
-                  <input type="text" value={formData.experience} onChange={e => setFormData({ ...formData, experience: e.target.value })} className="form-input bg-white" placeholder="e.g. 15 Years" />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1">Photo URL</label>
-                  <input type="text" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} className="form-input bg-white" placeholder="e.g. https://example.com/chef.png" />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-1">Biography & Achievements</label>
-                  <textarea value={formData.bio} onChange={e => setFormData({ ...formData, bio: e.target.value })} className="form-input bg-white" rows="5" placeholder="Tell the chef's culinary story..."></textarea>
-                </div>
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="w-full md:w-2/3 space-y-4">
                   <div>
-                    <label className="block text-sm font-bold mb-1"><i className="fab fa-instagram text-brand-600"></i> Instagram</label>
-                    <input type="url" value={formData.instagram} onChange={e => setFormData({ ...formData, instagram: e.target.value })} className="form-input bg-white" placeholder="https://instagram.com/..." />
+                    <label className="block text-sm font-bold mb-1">Full Name</label>
+                    <input type="text" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="form-input bg-white" placeholder="Chef Name" />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold mb-1"><i className="fab fa-linkedin text-brand-600"></i> LinkedIn</label>
-                    <input type="url" value={formData.linkedin} onChange={e => setFormData({ ...formData, linkedin: e.target.value })} className="form-input bg-white" placeholder="https://linkedin.com/in/..." />
+                    <label className="block text-sm font-bold mb-1">Title / Specialization</label>
+                    <input type="text" required value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} className="form-input bg-white" placeholder="e.g. Executive Chef, Pastry Master" />
                   </div>
+                  <div>
+                    <label className="block text-sm font-bold mb-1">Years of Experience</label>
+                    <input type="text" value={formData.experience} onChange={e => setFormData({ ...formData, experience: e.target.value })} className="form-input bg-white" placeholder="e.g. 15 Years" />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-bold mb-2">Biography & Achievements</label>
+                <textarea value={formData.bio} onChange={e => setFormData({ ...formData, bio: e.target.value })} className="form-input bg-white" rows="5" placeholder="Tell the chef's culinary story..."></textarea>
+              </div>
+              <div>
+                <label className="block text-sm font-bold mb-2">Cooking Philosophy Quote (Optional)</label>
+                <textarea value={formData.philosophy} onChange={e => setFormData({ ...formData, philosophy: e.target.value })} className="form-input bg-white" rows="2" placeholder="e.g. Cooking is an act of love..."></textarea>
+              </div>
+              <div className="grid md:grid-cols-2 gap-4 pt-4 border-t border-brand-600/10">
+                <div>
+                  <label className="block text-sm font-bold mb-1"><i className="fab fa-instagram text-brand-600"></i> Instagram</label>
+                  <input type="url" value={formData.instagram} onChange={e => setFormData({ ...formData, instagram: e.target.value })} className="form-input bg-white" placeholder="https://instagram.com/..." />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold mb-1"><i className="fab fa-linkedin text-brand-600"></i> LinkedIn</label>
+                  <input type="url" value={formData.linkedin} onChange={e => setFormData({ ...formData, linkedin: e.target.value })} className="form-input bg-white" placeholder="https://linkedin.com/in/..." />
                 </div>
               </div>
               <div className="flex justify-end gap-3 pt-4 border-t border-brand-600/10 mt-6">
