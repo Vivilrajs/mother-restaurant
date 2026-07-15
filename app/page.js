@@ -1,6 +1,9 @@
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import MenuTabsSection from '@/components/home/MenuTabsSection';
 import TestimonialSlider from '@/components/home/TestimonialSlider';
+import HeroSlider from '@/components/home/HeroSlider';
 import { getDb } from '@/lib/mongodb';
 
 const DEFAULT_AWARDS = [
@@ -13,13 +16,14 @@ const DEFAULT_AWARDS = [
 async function getData() {
   try {
     const db = await getDb();
-    const [signature, reviews, blog, gallery, chefs, awards] = await Promise.all([
+    const [signature, reviews, blog, gallery, chefs, awards, settings] = await Promise.all([
       db.collection('menu_items').find({ signature: true }).limit(3).toArray(),
-      db.collection('reviews').find({ status: 'approved' }).limit(3).toArray(),
+      db.collection('reviews').find({ status: 'approved' }).sort({ createdAt: -1 }).toArray(),
       db.collection('blog_posts').find({ status: 'Published' }).sort({ createdAt: -1 }).limit(3).toArray(),
       db.collection('gallery').find({}).sort({ createdAt: -1 }).limit(6).toArray(),
       db.collection('chefs').find({}).sort({ createdAt: 1 }).limit(1).toArray(),
       db.collection('awards').find({}).sort({ createdAt: 1 }).toArray(),
+      db.collection('settings').findOne({ _id: 'global' }),
     ]);
     const serialize = (arr) => arr.map(item => ({ ...item, _id: item._id.toString() }));
     return {
@@ -29,24 +33,23 @@ async function getData() {
       gallery: serialize(gallery),
       headChef: serialize(chefs)[0] || null,
       awards: awards.length > 0 ? serialize(awards) : DEFAULT_AWARDS,
+      settings: settings ? { ...settings, _id: settings._id.toString() } : null,
     };
   } catch (e) {
     console.error('Error in getData:', e);
-    return { signature: [], reviews: [], blog: [], gallery: [], headChef: null, awards: DEFAULT_AWARDS };
+    return { signature: [], reviews: [], blog: [], gallery: [], headChef: null, awards: DEFAULT_AWARDS, settings: null };
   }
 }
 
 export default async function HomePage() {
-  const { signature, reviews, blog, gallery, headChef, awards } = await getData();
+  const { signature, reviews, blog, gallery, headChef, awards, settings } = await getData();
 
   return (
     <>
       {/* Hero */}
       <section className="relative h-screen overflow-hidden bg-black">
         <div className="hero-glow-orb w-[400px] h-[400px] bg-brand-400/30 top-1/4 -left-20"></div>
-        <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover z-0">
-          <source src="https://videos.pexels.com/video-files/3205827/3205827-hd_1280_720_25fps.mp4" type="video/mp4" />
-        </video>
+        <HeroSlider slides={settings?.banner?.slides} />
         <div className="absolute inset-0 bg-black/50 z-[1]"></div>
         <div className="absolute inset-0 flex items-center z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20">
@@ -55,9 +58,9 @@ export default async function HomePage() {
                 <p className="text-brand-300 tracking-[.2em] text-xs font-sc font-bold">★ HOME-STYLE FINE DINING ★</p>
               </div>
               <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight text-white [text-shadow:_0_4px_12px_rgb(0_0_0_/_0.8)]">
-                The Secret<br /><span className="text-brand-300">Ingredient</span>
+                {settings?.siteName || "The Mother Restaurant"}
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-white/95 mb-8 max-w-md font-medium [text-shadow:_0_2px_8px_rgb(0_0_0_/_0.8)]">Home-style fine dining in the heart of the UAE.</p>
+              <p className="text-base sm:text-lg md:text-xl text-white/95 mb-8 max-w-md font-medium [text-shadow:_0_2px_8px_rgb(0_0_0_/_0.8)]">{settings?.tagline || "Love is Her Secret Ingredient"}</p>
               <div className="flex flex-wrap gap-3 sm:gap-4">
                 <Link href="/reservation" className="btn-premium px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base rounded-full font-semibold inline-flex items-center gap-2">
                   Book Your Table <i className="fas fa-arrow-right"></i>

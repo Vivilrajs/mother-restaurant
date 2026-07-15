@@ -125,7 +125,7 @@ export async function GET() {
 
     await db.collection('settings').updateOne(
       { _id: 'global' },
-      { $set: { _id: 'global', siteName:'The Mother Restaurant', tagline:'Love is Her Secret Ingredient', email:'info@themother.ae', currency:'AED', social:{ instagram:'https://instagram.com/themother', facebook:'https://facebook.com/themother', tiktok:'', twitter:'' }, updatedAt: now } },
+      { $set: { _id: 'global', siteName:'The Mother Restaurant', tagline:'Love is Her Secret Ingredient', email:'info@themother.ae', currency:'AED', social:{ instagram:'https://instagram.com/themother', facebook:'https://facebook.com/themother', tiktok:'', twitter:'' }, banner: { type: 'video', videoUrl: 'https://videos.pexels.com/video-files/3205827/3205827-hd_1280_720_25fps.mp4', imageUrl: '' }, updatedAt: now } },
       { upsert: true }
     );
 

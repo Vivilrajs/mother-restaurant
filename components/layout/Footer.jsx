@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export default function Footer() {
+export default function Footer({ settings }) {
   return (
     <footer className="site-footer py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -13,8 +13,13 @@ export default function Footer() {
             </div>
             <p className="text-[#c8b5b0] mb-6 max-w-sm">Where every dish is a labor of love, every meal a family memory, and every visit a homecoming.</p>
             <div className="flex gap-4">
-              {[['fab fa-instagram','#'],['fab fa-facebook','#'],['fab fa-tiktok','#'],['fab fa-twitter','#']].map(([icon,href],i) => (
-                <a key={i} href={href} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-600 transition"><i className={`${icon} text-white`}></i></a>
+              {[
+                ['fab fa-instagram', settings?.social?.instagram || '#'],
+                ['fab fa-facebook', settings?.social?.facebook || '#'],
+                ['fab fa-tiktok', settings?.social?.tiktok || '#'],
+                ['fab fa-twitter', settings?.social?.twitter || '#']
+              ].map(([icon,href],i) => (
+                <a key={i} href={href} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-600 transition"><i className={`${icon} text-white`}></i></a>
               ))}
             </div>
           </div>
@@ -36,12 +41,16 @@ export default function Footer() {
             <div className="mt-6">
               <h4 className="font-serif text-lg font-bold mb-3">Contact</h4>
               <p className="text-[#c8b5b0] text-sm">+971 4 400 0000</p>
-              <p className="text-[#c8b5b0] text-sm">hello@themotherrestaurant.ae</p>
+              <p className="text-[#c8b5b0] text-sm">
+                <a href={`mailto:${settings?.email || "hello@themotherrestaurant.ae"}`} className="hover:underline">
+                  {settings?.email || "hello@themotherrestaurant.ae"}
+                </a>
+              </p>
             </div>
           </div>
         </div>
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-[#c8b5b0] text-sm">© 2025 The Mother Restaurant. All rights reserved.</p>
+          <p className="text-[#c8b5b0] text-sm">© {new Date().getFullYear()} {settings?.siteName || "The Mother Restaurant"}. All rights reserved.</p>
           <div className="flex gap-6">
             <Link href="/faqs" className="text-[#c8b5b0] text-sm hover:text-brand-400 transition">FAQs</Link>
             <a href="#" className="text-[#c8b5b0] text-sm hover:text-brand-400 transition">Privacy Policy</a>

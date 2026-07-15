@@ -6,9 +6,10 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 const TITLES = {
   '/admin':'Dashboard','/admin/reservations':'Reservations','/admin/menu':'Menu Items',
   '/admin/chefs':'Chefs Team','/admin/gallery':'Gallery','/admin/blog':'Blog & News',
-  '/admin/reviews':'Reviews','/admin/branches':'Branches','/admin/settings':'Settings',
+  '/admin/reviews':'Reviews & Testimonials','/admin/branches':'Branches','/admin/settings':'Settings',
   '/admin/messages':'Customer Messages',
   '/admin/awards':'Awards & Certifications',
+  '/admin/banner':'Hero Banner',
 };
 
 function SearchBar() {

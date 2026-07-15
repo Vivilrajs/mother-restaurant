@@ -1,14 +1,21 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
-
-const CATS = ['All','food','ambiance','events'];
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 export default function GalleryPage() {
   const [images, setImages] = useState([]);
   const [cat, setCat] = useState('All');
   const [lightboxIndex, setLightboxIndex] = useState(null);
 
-  useEffect(() => { fetch('/api/gallery').then(r=>r.json()).then(d=>setImages(Array.isArray(d)?d:[])); }, []);
+  useEffect(() => {
+    fetch('/api/gallery')
+      .then(r => r.json())
+      .then(d => setImages(Array.isArray(d) ? d : []));
+  }, []);
+
+  const categories = useMemo(() => {
+    const cats = new Set(images.map(img => img.category).filter(Boolean));
+    return ['All', ...Array.from(cats)];
+  }, [images]);
 
   const filtered = cat === 'All' ? images : images.filter(i => i.category === cat);
 
@@ -41,7 +48,7 @@ export default function GalleryPage() {
       <section className="py-16 section-warm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap gap-3 justify-center mb-10">
-            {CATS.map(c => (
+            {categories.map(c => (
               <button key={c} onClick={() => setCat(c)} className={`gallery-filter px-6 py-2 rounded-full border font-semibold text-sm transition ${cat===c?'active':'border-brand-600/30'}`}>
                 {c.charAt(0).toUpperCase()+c.slice(1)}
               </button>

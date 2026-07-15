@@ -10,9 +10,30 @@ export default function AdminReviews() {
   const [statusFilter, setStatusFilter] = useState('pending');
   const [menuItems, setMenuItems] = useState([]);
 
-  // Add review modal state
+  // Add/Edit review modal state
   const [modal, setModal] = useState(false);
+  const [editItem, setEditItem] = useState(null);
   const [formData, setFormData] = useState({ customerName: '', rating: 5, text: '', role: '', source: 'Google', status: 'approved', menuItemId: '' });
+
+  function openAddModal() {
+    setEditItem(null);
+    setFormData({ customerName: '', rating: 5, text: '', role: '', source: 'Google', status: 'approved', menuItemId: '' });
+    setModal(true);
+  }
+
+  function openEditModal(review) {
+    setEditItem(review);
+    setFormData({
+      customerName: review.customerName || '',
+      rating: review.rating || 5,
+      text: review.text || '',
+      role: review.role || '',
+      source: review.source || 'Google',
+      status: review.status || 'pending',
+      menuItemId: review.menuItemId || ''
+    });
+    setModal(true);
+  }
 
   useEffect(() => {
     fetch('/api/menu').then(r => r.json()).then(data => setMenuItems(Array.isArray(data) ? data : [])).catch(() => {});
@@ -62,14 +83,22 @@ export default function AdminReviews() {
     e.preventDefault();
     const payload = { ...formData, menuItemId: formData.menuItemId || null };
     try {
-      const res = await fetch('/api/reviews', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      let res;
+      if (editItem) {
+        res = await fetch(`/api/reviews/${editItem._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } else {
+        res = await fetch('/api/reviews', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
       if (res.ok) {
         setModal(false);
-        setFormData({ customerName: '', rating: 5, text: '', role: '', source: 'Google', status: 'approved', menuItemId: '' });
         loadItems();
       }
     } catch (e) {
@@ -100,7 +129,7 @@ export default function AdminReviews() {
             Approved
           </button>
         </div>
-        <button onClick={() => setModal(true)} className="btn-premium px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2">
+        <button onClick={openAddModal} className="btn-premium px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2">
           <i className="fas fa-plus"></i> Add Review
         </button>
       </div>
@@ -137,21 +166,26 @@ export default function AdminReviews() {
                     <i className="fas fa-check"></i> Approve
                   </button>
                 )}
-                <button onClick={() => handleDelete(review._id)} className="px-4 py-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-xs font-bold transition flex items-center gap-1">
-                  <i className="fas fa-trash-alt"></i> Delete
-                </button>
+                <div className="flex gap-2">
+                  <button onClick={() => openEditModal(review)} className="px-3 py-2 bg-brand-50 text-brand-700 hover:bg-brand-100 rounded-lg text-xs font-bold transition flex items-center gap-1" title="Edit">
+                    <i className="fas fa-pen"></i> Edit
+                  </button>
+                  <button onClick={() => handleDelete(review._id)} className="px-3 py-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-xs font-bold transition flex items-center gap-1" title="Delete">
+                    <i className="fas fa-trash-alt"></i> Delete
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Add Review Modal */}
+      {/* Add/Edit Review Modal */}
       {modal && (
         <div className="admin-modal active">
           <div className="admin-modal-content relative max-w-md">
             <div className="sticky top-0 bg-white p-4 md:p-6 border-b border-brand-600/10 flex justify-between items-center z-10 rounded-t-2xl">
-              <h2 className="font-serif text-xl font-bold text-brand-700">Add Review</h2>
+              <h2 className="font-serif text-xl font-bold text-brand-700">{editItem ? 'Edit Review' : 'Add Review'}</h2>
               <button onClick={() => setModal(false)} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-red-100 hover:text-red-600 transition"><i className="fas fa-times"></i></button>
             </div>
             <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-4 bg-[#fdfbf7]">
@@ -176,6 +210,13 @@ export default function AdminReviews() {
                 <select value={formData.menuItemId} onChange={e => setFormData({ ...formData, menuItemId: e.target.value })} className="form-input bg-white">
                   <option value="">General review (not dish-specific)</option>
                   {menuItems.map(m => <option key={m._id} value={m._id}>{m.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-bold mb-1">Status</label>
+                <select value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })} className="form-input bg-white">
+                  <option value="pending">Pending (Hidden)</option>
+                  <option value="approved">Approved (Live)</option>
                 </select>
               </div>
               <div>

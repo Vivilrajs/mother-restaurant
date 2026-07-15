@@ -2,9 +2,12 @@ import { NextResponse } from 'next/server';
 import { verifySession, COOKIE_NAME } from '@/lib/auth';
 import { uploadToS3 } from '@/lib/s3';
 
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_FOLDERS = ['menu', 'chefs', 'gallery', 'blog'];
+const ALLOWED_TYPES = [
+  'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+  'video/mp4', 'video/webm', 'video/quicktime'
+];
+const MAX_SIZE = 50 * 1024 * 1024; // 50MB
+const ALLOWED_FOLDERS = ['menu', 'chefs', 'gallery', 'blog', 'banners'];
 
 export async function POST(request) {
   const token = request.cookies.get(COOKIE_NAME)?.value;
