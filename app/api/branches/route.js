@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/mongodb';
+import { revalidatePath } from 'next/cache';
 
 export async function GET() {
   try {
@@ -14,6 +15,10 @@ export async function POST(request) {
     const db = await getDb();
     const body = await request.json();
     const result = await db.collection('branches').insertOne({ ...body, createdAt: new Date() });
+    
+    // Purge cached about page
+    revalidatePath('/about');
+    
     return NextResponse.json({ ...body, _id: result.insertedId }, { status: 201 });
   } catch (e) { return NextResponse.json({ error: e.message }, { status: 500 }); }
 }

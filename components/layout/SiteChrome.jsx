@@ -12,9 +12,12 @@ export default function SiteChrome({ children }) {
   useEffect(() => {
     if (isAdmin) return;
     fetch('/api/settings')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error('Settings API failed');
+        return r.json();
+      })
       .then(d => setSettings(d))
-      .catch(e => console.error(e));
+      .catch(e => console.log('Settings fetch notice:', e.message));
   }, [isAdmin]);
 
   if (isAdmin) {

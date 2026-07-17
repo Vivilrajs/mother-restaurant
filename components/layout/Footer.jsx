@@ -6,11 +6,7 @@ export default function Footer({ settings }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div className="md:col-span-2">
-            <div className="logo-container mb-6">
-              <div><div className="logo-the" style={{color:'#f9f3e8'}}>THE</div><div className="logo-m" style={{color:'#d98f7c'}}>m</div></div>
-              <div className="logo-circle"><div className="logo-circle-text">LOVE IS<br/>HER SECRET<br/>INGREDIENT</div></div>
-              <div><div className="logo-m" style={{color:'#d98f7c'}}>ther</div><div className="logo-restaurant" style={{color:'#f9f3e8'}}>RESTAURANT</div></div>
-            </div>
+            <img src="/logo.png" alt="The Mother Restaurant" className="h-12 w-auto object-contain mb-6" />
             <p className="text-[#c8b5b0] mb-6 max-w-sm">Where every dish is a labor of love, every meal a family memory, and every visit a homecoming.</p>
             <div className="flex gap-4">
               {[

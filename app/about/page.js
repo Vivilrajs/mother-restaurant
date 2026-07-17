@@ -1,7 +1,25 @@
 import Link from 'next/link';
+import { getDb } from '@/lib/mongodb';
+
+export const dynamic = 'force-dynamic';
+
 export const metadata = { title: 'About Us — The Mother Restaurant', description: 'Learn about the history, values, and team behind The Mother Restaurant.' };
 
-export default function AboutPage() {
+const numberToWord = (num) => {
+  const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+  return words[num] || num.toString();
+};
+
+export default async function AboutPage() {
+  let branchCount = 5;
+  try {
+    const db = await getDb();
+    branchCount = await db.collection('branches').countDocuments();
+  } catch (e) {
+    console.error(e);
+  }
+  const branchCountWord = numberToWord(branchCount);
+
   return (
     <>
       <div className="pt-20 relative overflow-hidden min-h-[60vh] flex items-center" style={{background:'linear-gradient(135deg,#2d2422 0%,#4a3530 50%,#2d2422 100%)'}}>
@@ -18,9 +36,9 @@ export default function AboutPage() {
             <p className="text-brand-600 tracking-[.3em] text-sm mb-4 font-sc">// WHO WE ARE //</p>
             <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-heading">A <span className="text-gradient">Family</span> Legacy</h2>
             <p className="text-muted mb-4 leading-relaxed">Founded in 1998 by Hessa Al-Rashid in the neighborhood of Deira, Dubai, The Mother Restaurant started as a small family kitchen. What began as cooking for neighbors grew into a celebrated dining institution across the UAE.</p>
-            <p className="text-muted mb-6 leading-relaxed">Today, we operate five branches across the Emirates, each maintaining the warmth and authenticity of that original kitchen — with the love of a mother in every dish.</p>
+            <p className="text-muted mb-6 leading-relaxed">Today, we operate {branchCountWord} branches across the Emirates, each maintaining the warmth and authenticity of that original kitchen — with the love of a mother in every dish.</p>
             <div className="grid grid-cols-3 gap-6">
-              {[['1998','Founded'],['5','Branches'],['50K+','Families Served']].map(([n,l]) => (
+              {[['1998','Founded'],[branchCount.toString(),'Branches'],['50K+','Families Served']].map(([n,l]) => (
                 <div key={l}><div className="font-serif text-3xl font-bold text-brand-600">{n}</div><div className="text-sm text-muted">{l}</div></div>
               ))}
             </div>

@@ -131,7 +131,11 @@ export default function AdminReservations() {
                 <tr><td colSpan="6" className="text-center py-8 text-gray-500">No reservations found.</td></tr>
               ) : filteredItems.map(item => (
                 <tr key={item._id} className="cursor-pointer" onClick={() => setSelected(item)}>
-                  <td><div className="font-semibold">{item.name}</div><div className="text-xs text-gray-500">{item.occasion || 'No Occasion'}</div></td>
+                  <td>
+                    <div className="font-semibold">{item.name}</div>
+                    <div className="text-xs text-brand-600 font-semibold">{item.branch || 'Jumeirah Main Branch'}</div>
+                    <div className="text-xs text-gray-500">{item.occasion || 'No Occasion'}</div>
+                  </td>
                   <td><div>{item.date}</div><div className="text-xs text-gray-500">{item.time}</div></td>
                   <td>{item.guests}</td>
                   <td><div className="text-xs">{item.phone}</div><div className="text-xs text-gray-500">{item.email}</div></td>
@@ -163,6 +167,7 @@ export default function AdminReservations() {
             <div className="p-4 md:p-6 bg-[#fdfbf7] space-y-4">
               <h3 className="font-serif text-2xl font-bold mb-4 border-b pb-2 text-[#2d2422]">{selected.name}</h3>
               <div className="space-y-3 text-sm text-gray-700">
+                <p><strong>Branch:</strong> <span className="text-brand-600 font-semibold">{selected.branch || 'Jumeirah Main Branch'}</span></p>
                 <p><strong>Occasion:</strong> {selected.occasion || 'None'}</p>
                 <p><strong>Guests:</strong> {selected.guests}</p>
                 <p><strong>Date & Time:</strong> {selected.date} at {selected.time}</p>

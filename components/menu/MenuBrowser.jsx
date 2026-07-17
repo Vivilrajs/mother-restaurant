@@ -1,6 +1,7 @@
 'use client';
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import ExpandableDescription from './ExpandableDescription';
 
 export default function MenuBrowser({ items, categories }) {
   const [search, setSearch] = useState('');
@@ -64,7 +65,7 @@ export default function MenuBrowser({ items, categories }) {
               </div>
               <div className="p-4">
                 <h3 className="font-serif font-bold text-heading text-base mb-1">{item.name}</h3>
-                <p className="text-muted text-xs mb-3 line-clamp-2">{item.description}</p>
+                <ExpandableDescription text={item.description} className="text-muted text-xs mb-3" />
                 <div className="flex items-center justify-between">
                   <span className="text-brand-600 font-bold font-serif">AED {item.price}</span>
                   {item.prepTime && <span className="text-muted text-xs"><i className="far fa-clock mr-1"></i>{item.prepTime} min</span>}

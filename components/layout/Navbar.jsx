@@ -4,11 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const Logo = () => (
-  <div className="logo-container">
-    <div><div className="logo-the">THE</div><div className="logo-m">m</div></div>
-    <div className="logo-circle"><div className="logo-circle-text">LOVE IS<br/>HER SECRET<br/>INGREDIENT</div></div>
-    <div><div className="logo-m">ther</div><div className="logo-restaurant">RESTAURANT</div></div>
-  </div>
+  <img src="/logo.png" alt="The Mother Restaurant" className="h-24 md:h-32 lg:h-36 w-auto object-contain flex-shrink transition-all duration-300 my-[-20px] md:my-[-30px]" />
 );
 
 export default function Navbar() {
@@ -60,8 +56,8 @@ export default function Navbar() {
     <>
       <nav id="navbar" className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'scrolled bg-white/95 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <Link href="/"><Logo /></Link>
+          <div className="flex items-center justify-between h-20 gap-4">
+            <Link href="/" className="flex-shrink min-w-0 flex items-center"><Logo /></Link>
             <div className="hidden lg:flex items-center gap-6">
               {navLinks.map((link) =>
                 link.children ? (
@@ -80,14 +76,14 @@ export default function Navbar() {
                 )
               )}
             </div>
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
               <button onClick={toggleTheme} className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-brand-600/30 flex items-center justify-center hover:bg-brand-600/10 transition bg-white/90 dark:bg-[#1a1412]/90 backdrop-blur shadow-sm" aria-label="Toggle theme">
                 <i className={`fas ${dark ? 'fa-moon text-brand-400' : 'fa-sun text-brand-600'} text-xs sm:text-sm`}></i>
               </button>
               <Link href="/reservation" className="btn-premium px-6 py-2.5 rounded-full text-sm font-semibold hidden md:inline-flex items-center gap-2">
                 <i className="fas fa-calendar-alt"></i> Reserve
               </Link>
-              <button onClick={() => setMobileOpen(true)} className="lg:hidden w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-heading rounded-full bg-white/90 dark:bg-[#1a1412]/90 backdrop-blur border border-brand-600/30 shadow-sm">
+              <button onClick={() => setMobileOpen(true)} className="lg:hidden w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-brand-600 rounded-full bg-white/90 dark:bg-[#1a1412]/90 backdrop-blur border border-brand-600/30 shadow-sm" aria-label="Open menu">
                 <i className="fas fa-bars text-lg sm:text-xl"></i>
               </button>
             </div>
@@ -99,11 +95,7 @@ export default function Navbar() {
       <div className={`mobile-menu lg:hidden ${mobileOpen ? 'active' : ''}`}>
         <div className="flex flex-col h-full p-8">
           <div className="flex justify-between items-center mb-12">
-            <div className="logo-container">
-              <div><div className="logo-the" style={{color:'#f9f3e8'}}>THE</div><div className="logo-m" style={{color:'#d98f7c'}}>m</div></div>
-              <div className="logo-circle"><div className="logo-circle-text">LOVE IS<br/>HER SECRET<br/>INGREDIENT</div></div>
-              <div><div className="logo-m" style={{color:'#d98f7c'}}>ther</div><div className="logo-restaurant" style={{color:'#f9f3e8'}}>RESTAURANT</div></div>
-            </div>
+            <img src="/logo.png" alt="The Mother Restaurant" className="h-20 w-auto object-contain my-[-20px]" />
             <button onClick={() => setMobileOpen(false)} className="w-10 h-10 flex items-center justify-center text-white"><i className="fas fa-times text-2xl"></i></button>
           </div>
           <div className="flex flex-col gap-4 overflow-y-auto max-h-[70vh] pr-2">

@@ -16,8 +16,17 @@ async function getContactInfo() {
   } catch { return { phone: '', email: '' }; }
 }
 
+async function getBranches() {
+  try {
+    const db = await getDb();
+    const raw = await db.collection('branches').find({}).sort({ createdAt: 1 }).toArray();
+    return raw.map(b => ({ _id: b._id.toString(), name: b.name }));
+  } catch { return []; }
+}
+
 export default async function ReservationPage() {
   const { phone, email } = await getContactInfo();
+  const branches = await getBranches();
 
   return (
     <>
@@ -30,7 +39,7 @@ export default async function ReservationPage() {
       </div>
       <section className="py-24 section-warm">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ReservationForm />
+          <ReservationForm branches={branches} />
 
           {(phone || email) && (
             <div className="mt-12 grid md:grid-cols-3 gap-6 text-center">

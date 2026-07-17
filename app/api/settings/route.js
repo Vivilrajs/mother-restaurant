@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/mongodb';
+import { revalidatePath } from 'next/cache';
 
 export async function GET() {
   try {
@@ -19,6 +20,10 @@ export async function PUT(request) {
       { $set: { ...body, updatedAt: new Date() } },
       { upsert: true }
     );
+    
+    // Purge cached paths so home page updates immediately
+    revalidatePath('/');
+    
     return NextResponse.json({ success: true });
   } catch (e) { return NextResponse.json({ error: e.message }, { status: 500 }); }
 }

@@ -23,6 +23,7 @@
 * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; box-sizing: border-box; }
 html, body { margin: 0; padding: 0; overflow-x: hidden; width: 100vw; max-width: 100%; }
 body { font-family: 'Inter', sans-serif; background-color: #fdfbf7; color: #2d2422; transition: background-color 0.4s ease, color 0.4s ease; min-height: 100vh; }
+.dark body { background-color: #1a1412; color: #f9f3e8; }
 
 /* ── Scrollbar ────────────────────────────────────── */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -143,8 +144,11 @@ body { font-family: 'Inter', sans-serif; background-color: #fdfbf7; color: #2d24
 .form-input { background:rgba(184,117,106,.08); border:1px solid rgba(184,117,106,.3); transition:all .3s ease; color:inherit; font-family:inherit; width:100%; padding:.625rem 1rem; border-radius:.5rem; }
 .form-input:focus { border-color:#b8756a; background:rgba(184,117,106,.12); outline:none; box-shadow:0 0 0 3px rgba(184,117,106,.15); }
 .form-input::placeholder { color:#9a8a85; }
-.dark .form-input { background:rgba(184,117,106,.08); }
+.dark .form-input { background:rgba(184,117,106,.08); color:#f9f3e8; }
 .dark .form-input:focus { border-color:#d98f7c; }
+.dark .form-input::placeholder { color:#c8b5b0; }
+.dark .form-input option { background-color:#1a1412; color:#f9f3e8; }
+.dark .form-input::-webkit-calendar-picker-indicator { filter: invert(1) sepia(30%) saturate(200%) hue-rotate(320deg) brightness(95%); }
 
 /* ── Logo ────────────────────────────────────────── */
 .logo-container { display:inline-flex; align-items:center; gap:4px; max-width:100%; }

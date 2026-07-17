@@ -69,6 +69,19 @@ export default function AdminReviews() {
     }
   }
 
+  async function handleReject(id) {
+    try {
+      const res = await fetch(`/api/reviews/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'pending' })
+      });
+      if (res.ok) loadItems();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   async function handleDelete(id) {
     if (!confirm('Are you sure you want to delete this review?')) return;
     try {
@@ -164,6 +177,11 @@ export default function AdminReviews() {
                 {review.status === 'pending' && (
                   <button onClick={() => handleApprove(review._id)} className="px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg text-xs font-bold transition flex items-center gap-1">
                     <i className="fas fa-check"></i> Approve
+                  </button>
+                )}
+                {review.status === 'approved' && (
+                  <button onClick={() => handleReject(review._id)} className="px-4 py-2 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg text-xs font-bold transition flex items-center gap-1">
+                    <i className="fas fa-undo"></i> Move to Pending
                   </button>
                 )}
                 <div className="flex gap-2">

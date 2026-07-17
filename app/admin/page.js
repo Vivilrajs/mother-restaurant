@@ -82,41 +82,41 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="admin-glass p-6 flex items-center justify-between">
+        <Link href="/admin/menu" className="admin-glass p-6 flex items-center justify-between hover:-translate-y-1 hover:border-brand-600/30 transition-all duration-300 cursor-pointer block">
           <div>
             <p className="text-sm text-gray-500 font-semibold mb-1">Total Menu Items</p>
             <h3 className="font-serif text-3xl font-bold text-[#2d2422]">{loading ? '...' : stats.menu}</h3>
             <p className="text-xs text-green-600 mt-2"><i className="fas fa-arrow-up"></i> Live on site</p>
           </div>
           <div className="w-12 h-12 rounded-full bg-brand-600/10 flex items-center justify-center text-brand-600 text-xl"><i className="fas fa-utensils"></i></div>
-        </div>
+        </Link>
 
-        <div className="admin-glass p-6 flex items-center justify-between">
+        <Link href="/admin/chefs" className="admin-glass p-6 flex items-center justify-between hover:-translate-y-1 hover:border-brand-600/30 transition-all duration-300 cursor-pointer block">
           <div>
             <p className="text-sm text-gray-500 font-semibold mb-1">Active Chefs</p>
             <h3 className="font-serif text-3xl font-bold text-[#2d2422]">{loading ? '...' : stats.chefs}</h3>
             <p className="text-xs text-gray-500 mt-2">Fully staffed</p>
           </div>
           <div className="w-12 h-12 rounded-full bg-brand-600/10 flex items-center justify-center text-brand-600 text-xl"><i className="fas fa-user-tie"></i></div>
-        </div>
+        </Link>
 
-        <div className="admin-glass p-6 flex items-center justify-between">
+        <Link href="/admin/reviews" className="admin-glass p-6 flex items-center justify-between hover:-translate-y-1 hover:border-brand-600/30 transition-all duration-300 cursor-pointer block">
           <div>
             <p className="text-sm text-gray-500 font-semibold mb-1">Pending Reviews</p>
             <h3 className="font-serif text-3xl font-bold text-[#2d2422]">{loading ? '...' : stats.reviews}</h3>
             <p className="text-xs text-yellow-600 mt-2"><i className="fas fa-clock"></i> Requires approval</p>
           </div>
           <div className="w-12 h-12 rounded-full bg-brand-600/10 flex items-center justify-center text-brand-600 text-xl"><i className="fas fa-star"></i></div>
-        </div>
+        </Link>
 
-        <div className="admin-glass p-6 flex items-center justify-between">
+        <Link href="/admin/blog" className="admin-glass p-6 flex items-center justify-between hover:-translate-y-1 hover:border-brand-600/30 transition-all duration-300 cursor-pointer block">
           <div>
             <p className="text-sm text-gray-500 font-semibold mb-1">Blog Articles</p>
             <h3 className="font-serif text-3xl font-bold text-[#2d2422]">{loading ? '...' : stats.blog}</h3>
             <p className="text-xs text-green-600 mt-2"><i className="fas fa-arrow-up"></i> Published & Drafts</p>
           </div>
           <div className="w-12 h-12 rounded-full bg-brand-600/10 flex items-center justify-center text-brand-600 text-xl"><i className="fas fa-pen-nib"></i></div>
-        </div>
+        </Link>
       </div>
 
       {/* Activity & Quick Actions */}

@@ -13,6 +13,7 @@ const NAV = [
   { label:'Reviews & Testimonials', href:'/admin/reviews', icon:'fa-star', group:'Content' },
   { label:'Messages', href:'/admin/messages', icon:'fa-envelope', group:'Content' },
   { label:'Awards & Certifications', href:'/admin/awards', icon:'fa-award', group:'Content' },
+  { label:'FAQs', href:'/admin/faqs', icon:'fa-question-circle', group:'Content' },
   { label:'Hero Banner', href:'/admin/banner', icon:'fa-tv', group:'Content' },
   { label:'Branches', href:'/admin/branches', icon:'fa-map-marker-alt', group:'System' },
   { label:'Settings', href:'/admin/settings', icon:'fa-cog', group:'System' }
@@ -31,11 +32,10 @@ export default function AdminSidebar({ onClose }) {
 
   return (
     <aside className="w-64 bg-white border-r border-brand-600/10 flex flex-col shadow-sm h-full">
-      <div className="h-20 flex items-center justify-between border-b border-brand-600/10 px-4">
-        <div className="logo-container" style={{transform:'scale(.85)',transformOrigin:'left'}}>
-          <div><div className="logo-the">THE</div><div className="logo-m">m</div></div>
-          <div className="logo-circle"><div className="logo-circle-text">LOVE IS<br/>HER SECRET<br/>INGREDIENT</div></div>
-          <div><div className="logo-m">ther</div><div className="logo-restaurant">ADMIN</div></div>
+      <div className="h-20 flex items-center justify-between border-b border-brand-600/10 px-4 overflow-hidden">
+        <div className="flex items-center gap-2 my-[-20px] h-20">
+          <img src="/logo.png" alt="The Mother Restaurant" className="h-24 w-auto object-contain" />
+          <span className="font-serif text-xs font-bold text-brand-700 tracking-wider flex-shrink-0">ADMIN</span>
         </div>
         {onClose && <button onClick={onClose} className="text-gray-500 hover:text-red-500"><i className="fas fa-times"></i></button>}
       </div>

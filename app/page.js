@@ -4,6 +4,8 @@ import Link from 'next/link';
 import MenuTabsSection from '@/components/home/MenuTabsSection';
 import TestimonialSlider from '@/components/home/TestimonialSlider';
 import HeroSlider from '@/components/home/HeroSlider';
+import EventImageSlider from '@/components/home/EventImageSlider';
+import ExpandableDescription from '@/components/menu/ExpandableDescription';
 import { getDb } from '@/lib/mongodb';
 
 const DEFAULT_AWARDS = [
@@ -103,7 +105,7 @@ export default async function HomePage() {
                     {item.badge && <div className="absolute top-4 right-4 bg-brand-600 text-white px-3 py-1 rounded-full text-xs font-bold">{item.badge}</div>}
                     <div className="absolute bottom-4 left-4 right-4">
                       <h3 className="font-serif text-2xl font-bold mb-1 text-white">{item.name}</h3>
-                      <p className="text-gray-200 text-sm">{item.description}</p>
+                      <ExpandableDescription text={item.description} className="text-gray-200 text-sm mb-1" />
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
@@ -313,8 +315,8 @@ export default async function HomePage() {
                 Plan Your Event <i className="fas fa-arrow-right"></i>
               </Link>
             </div>
-            <div className="rounded-2xl overflow-hidden aspect-[4/5] bg-gradient-to-br from-brand-400/20 to-brand-800/20 flex items-center justify-center">
-              <i className="fas fa-glass-cheers text-6xl text-brand-400"></i>
+            <div className="aspect-[4/5]">
+              <EventImageSlider />
             </div>
           </div>
         </div>

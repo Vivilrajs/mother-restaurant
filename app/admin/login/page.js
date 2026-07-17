@@ -21,10 +21,9 @@ export default function AdminLoginPage() {
       <div className="bg-white border border-brand-600/15 shadow-2xl rounded-2xl p-10 w-full max-w-md mx-4 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-400 via-brand-600 to-brand-800"></div>
         <div className="flex justify-center mb-8">
-          <div className="logo-container">
-            <div><div className="logo-the">THE</div><div className="logo-m">m</div></div>
-            <div className="logo-circle"><div className="logo-circle-text">LOVE IS<br/>HER SECRET<br/>INGREDIENT</div></div>
-            <div><div className="logo-m">ther</div><div className="logo-restaurant">ADMIN PANEL</div></div>
+          <div className="flex flex-col items-center gap-2 my-[-20px]">
+            <img src="/logo.png" alt="The Mother Restaurant" className="h-32 w-auto object-contain" />
+            <span className="font-serif text-sm font-bold text-brand-700 tracking-wider">ADMIN PANEL</span>
           </div>
         </div>
         <h2 className="font-serif text-2xl font-bold text-center mb-2 text-heading">Welcome Back</h2>
